@@ -12,11 +12,11 @@ const Header: FC = () => {
       <div className='cursor-pointer p-2 rounded-lg hover:border-[0.5px] hover:border-gray-900 hover:shadow-sm'>
         <Menu className='text-2xl text-gray-600' />
       </div>
-      <Link href={'/'} className='cursor-pointer select-none text-xl font-semibold'>
+      <Link href={'/'} className='cursor-pointer select-none text-xl font-semibold text-gray-600'>
         Blogger
       </Link>
       {
-        status === 'authenticated' ? <AuthSection /> : status === 'loading' ? <Loading /> : <GeneralSection />
+        true ? <AuthSection /> : status === 'loading' ? <Loading /> : <GeneralSection />
       }
     </header>
   )
@@ -25,11 +25,11 @@ const Header: FC = () => {
 const AuthSection: FC = () => {
   return (
     <div className='flex items-center space-x-4'>
-      <div>
-        <Bell className='text-2xl text-gray-600' />
+      <div className='text-gray-600'>
+        <Bell className='w-5 h-5' />
       </div>
       <div>
-        <div className='h-5 w-5 rounded-full bg-gray-600' />
+        <div className='h-8 w-8 rounded-full bg-gray-200' />
       </div>
       <div>
         <button
