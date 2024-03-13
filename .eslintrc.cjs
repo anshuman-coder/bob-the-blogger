@@ -64,6 +64,7 @@ const config = {
       },
     ],
     "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
+    "react/jsx-indent": ["error", 2], // Enforce 2 spaces indentation for JSX
   },
 };
 
