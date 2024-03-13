@@ -7,7 +7,12 @@ export default function Home() {
     <>
       <PageHelmet title='Bob | Login' />
       <PageBox>
-        Anshuman
+        <main className='col-span-8 border-r border-black'>
+          this is main section
+        </main>
+        <aside className='col-span-4'>
+          this is side Section
+        </aside>
       </PageBox>
     </>
   );

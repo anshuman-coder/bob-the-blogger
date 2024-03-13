@@ -14,7 +14,7 @@ const PageBox: FC<PageBoxProps> = ({
   children,
 }) => {
   return (
-    <main className={clsx(
+    <div className={clsx(
       'flex flex-col h-screen w-full justify-start items-center gap-y-5',
       isLoading && 'relative',
     )}>
@@ -22,7 +22,7 @@ const PageBox: FC<PageBoxProps> = ({
         !isLoading ? (
           <>
             <Header />
-            <section className='grid grid-cols-12'>
+            <section className='grid grid-cols-12 w-full h-full'>
               {
                 children
               }
@@ -32,7 +32,7 @@ const PageBox: FC<PageBoxProps> = ({
           <Loader />
         )
       }
-    </main>
+    </div>
   )
 }
 
