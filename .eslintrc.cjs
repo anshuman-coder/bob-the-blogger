@@ -46,7 +46,7 @@ const config = {
     "react/jsx-curly-spacing": [
       "error",
       {
-        when: "always", // Require spaces inside curly braces in JSX attributes
+        when: "never", // dont require spaces inside curly braces in JSX attributes
         children: true,
         spacing: {
           objectLiterals: "never", // Disallow spaces inside of JSX curly braces in object literals

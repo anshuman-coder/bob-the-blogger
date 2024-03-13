@@ -10,7 +10,7 @@ interface LoaderProps {
 const Loader: FC<LoaderProps> = ({ height= 20, width = 20 }) => {
   return (
     <div className='absolute flex justify-center items-center'>
-      <RefreshCcw className='animate-spin' height={ height } width={ width } />
+      <RefreshCcw className='animate-spin' height={height} width={width} />
     </div>
   )
 }

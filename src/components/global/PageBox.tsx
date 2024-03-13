@@ -14,10 +14,10 @@ const PageBox: FC<PageBoxProps> = ({
   children,
 }) => {
   return (
-    <main className={ clsx(
+    <main className={clsx(
       'flex flex-col h-screen w-full justify-start items-center gap-y-5',
       isLoading && 'relative',
-    ) }>
+    )}>
       {
         !isLoading ? (
           <>

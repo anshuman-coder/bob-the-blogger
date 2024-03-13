@@ -10,10 +10,10 @@ interface PageHelmetProps {
 const PageHelmet: FC<PageHelmetProps> = ({ title = '', children }) => {
   return (
     <Head>
-      <title>{ title }</title>
+      <title>{title}</title>
       <meta name='description' content='Blog regarding anything' />
       <link rel='icon' href='/favicon.ico' />
-      { children }
+      {children}
     </Head>
   )
 }
