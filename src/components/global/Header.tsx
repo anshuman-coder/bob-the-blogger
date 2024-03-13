@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { Menu } from 'lucide-react'
+import { Menu, LogIn } from 'lucide-react'
 
 const Header = () => {
   return (
@@ -15,7 +15,8 @@ const Header = () => {
         <button
           className='flex items-center space-x-3 rounded border-[0.5px] border-gray-200 px-4 py-2 transition hover:border-gray-900 hover:text-gray-900'
         >
-          Signin
+          <LogIn className='w-4 h-4' />
+          <p> Signin</p>
         </button>
       </div>
     </header>
