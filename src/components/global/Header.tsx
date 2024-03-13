@@ -16,7 +16,7 @@ const Header = () => {
           className='flex items-center space-x-3 rounded border-[0.5px] border-gray-200 px-4 py-2 transition hover:border-gray-900 hover:text-gray-900'
         >
           <LogIn className='w-4 h-4' />
-          <p> Signin</p>
+          <p>Signin</p>
         </button>
       </div>
     </header>
