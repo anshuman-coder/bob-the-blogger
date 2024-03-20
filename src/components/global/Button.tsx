@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 import type { FC, ReactNode, ButtonHTMLAttributes } from 'react'
 import Loader from './Loader'
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary'
   className?: string
   circled?: boolean

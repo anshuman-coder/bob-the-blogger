@@ -1,11 +1,24 @@
 import React from 'react'
 import type { FC } from 'react'
 import { Search } from 'lucide-react'
-import { Button } from '~/components/global'
+import { Button, DropDown } from '~/components/global'
+import type { Option } from '~/components/global/DropDown'
+
+const OPTIONS: Option[] =[
+  {
+    label: 'All',
+    value: 'all',
+  },
+  {
+    label: 'Following',
+    value: 'following',
+    isDefault: true
+  }
+] 
 
 const MainSection: FC = () => {
   return (
-    <main className='col-span-8 border-r border-gray-300 px-24'>
+    <main className='col-span-8 border-r border-gray-300 px-20'>
       <div className='w-full flex flex-col space-y-4 py-4'>
         <div className='w-full flex items-center space-x-4'>
           <label
@@ -37,6 +50,14 @@ const MainSection: FC = () => {
                 </Button>
               ))}
             </div>
+          </div>
+        </div>
+        <div className='w-full flex justify-between items-center border-b border-gray-300 pb-8'>
+          <div>
+            Article
+          </div>
+          <div className='flex justify-center items-center'>
+            <DropDown options={OPTIONS} />
           </div>
         </div>
       </div>
