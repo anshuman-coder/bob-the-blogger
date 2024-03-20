@@ -1,6 +1,7 @@
 import React from 'react'
 import type { FC } from 'react'
 import { Search } from 'lucide-react'
+import { Button } from '~/components/global'
 
 const MainSection: FC = () => {
   return (
@@ -26,9 +27,14 @@ const MainSection: FC = () => {
             <p className='text-sm'>My topics:</p>
             <div className='flex items-center space-x-2'>
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className='rounded-3xl bg-gray-200/50 px-2 py-1.5 text-sm'>
-                  tag {i}
-                </div>
+                <Button
+                  key={i}
+                  circled
+                  variant='secondary'
+                  className='py-1.5 px-4'
+                >
+                  <p>tag {i} </p>
+                </Button>
               ))}
             </div>
           </div>

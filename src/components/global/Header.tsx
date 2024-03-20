@@ -3,7 +3,7 @@ import type { FC } from 'react'
 import Link from 'next/link'
 import { Menu, LogIn, SquarePen, Bell, LogOut } from 'lucide-react'
 import { useSession } from 'next-auth/react'
-import Loader from './Loader'
+import { Button, Loader } from '~/components/global'
 
 const Header: FC = () => {
   const { status } = useSession()
@@ -15,8 +15,9 @@ const Header: FC = () => {
       <Link href={'/'} className='cursor-pointer select-none text-xl font-semibold text-gray-600'>
         Blogger
       </Link>
+      {/* status === 'authenticated' */}
       {
-        status === 'authenticated' ? <AuthSection /> : status === 'loading' ? <Loading /> : <GeneralSection />
+         status === 'authenticated' ? <AuthSection /> : status === 'loading' ? <Loading /> : <GeneralSection />
       }
     </header>
   )
@@ -32,24 +33,20 @@ const AuthSection: FC = () => {
         <div className='h-8 w-8 rounded-full bg-gray-200' />
       </div>
       <div>
-        <button
-          className='flex items-center space-x-2 rounded border border-gray-200 px-4 py-2 transition hover:border-gray-900 hover:text-gray-900'
+        <Button
+          type='button'
+          startIcon={<SquarePen className='w-4 h-4' />}
         >
-          <div>
-            <SquarePen className='w-4 h-4' />
-          </div>
-          <div>Write</div>
-        </button>
+          <p>Write</p>
+        </Button>
       </div>
       <div>
-        <button
-          className='flex items-center space-x-2 rounded border border-gray-200 px-4 py-2 transition hover:border-gray-900 hover:text-gray-900'
+        <Button
+          type='button'
+          startIcon={<LogOut className='w-4 h-4' />}
         >
-          <div>
-            <LogOut className='w-4 h-4' />
-          </div>
-          <div>Logout</div>
-        </button>
+          <p>Logout</p>
+        </Button>
       </div>
     </div>
   )
@@ -58,12 +55,13 @@ const AuthSection: FC = () => {
 const GeneralSection: FC = () => {
   return (
     <div>
-      <button
-        className='flex items-center space-x-2 rounded border-[0.5px] border-gray-200 px-4 py-2 transition hover:border-gray-900 hover:text-gray-900'
+      <Button
+        variant='primary'
+        type='button'
+        startIcon={<LogIn className='w-4 h-4' />}
       >
-        <LogIn className='w-4 h-4' />
         <p>Signin</p>
-      </button>
+      </Button>
     </div>
   )
 }
