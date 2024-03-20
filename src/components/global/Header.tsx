@@ -16,7 +16,7 @@ const Header: FC = () => {
         Blogger
       </Link>
       {
-        true ? <AuthSection /> : status === 'loading' ? <Loading /> : <GeneralSection />
+        status === 'authenticated' ? <AuthSection /> : status === 'loading' ? <Loading /> : <GeneralSection />
       }
     </header>
   )
