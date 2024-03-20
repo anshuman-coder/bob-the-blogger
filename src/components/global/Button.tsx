@@ -73,7 +73,7 @@ const Button: FC<ButtonProps> = (props) => {
   )
 }
 
-const BASIC_CLASS = 'space-x-1.5 flex justify-center items-center py-2'
+const BASIC_CLASS = 'gap-x-1.5 flex justify-center items-center py-2'
 
 const ROUNDED_CLASS = (isCircled: ButtonProps['circled']) => clsx(
   isCircled ? 'rounded-3xl' : 'rounded'
@@ -85,7 +85,7 @@ const BORDER_CLASS = (variant: ButtonProps['variant']) => clsx(
 
 const TEXT_CLASS = (variant: ButtonProps['variant'], size: ButtonProps['size']) => clsx(
   variant === 'primary' ? 'hover:text-gray-900' : '',
-  size === 'md' ? 'text-sm px-1.5' : 'text-md px-3'
+  size === 'md' ? 'text-sm px-2' : 'text-md px-3'
 )
 
 const BG_CLASS = (variant: ButtonProps['variant']) => clsx(
