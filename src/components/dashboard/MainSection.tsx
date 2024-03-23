@@ -1,7 +1,7 @@
 import React from 'react'
 import type { FC } from 'react'
 import { Search } from 'lucide-react'
-import { Button, DropDown } from '~/components/global'
+import { Button, DropDown, Loader } from '~/components/global'
 import type { Option } from '~/components/global/DropDown'
 
 const OPTIONS: Option[] =[
@@ -60,6 +60,10 @@ const MainSection: FC = () => {
             <DropDown options={OPTIONS} />
           </div>
         </div>
+      </div>
+
+      <div className='flex w-full flex-col justify-center items-center space-y-4'>
+        <Loader />
       </div>
     </main>
   )

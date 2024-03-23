@@ -29,7 +29,7 @@ const PageBox: FC<PageBoxProps> = ({
             </section>
           </>
         ) : (
-          <Loader />
+          <Loader loaderContainerClass='absolute' />
         )
       }
     </div>

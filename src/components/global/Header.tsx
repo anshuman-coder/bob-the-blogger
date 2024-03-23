@@ -69,7 +69,7 @@ const GeneralSection: FC = () => {
 const Loading: FC = () => {
   return (
     <div className='relative flex justify-center items-center p-5'>
-      <Loader />
+      <Loader loaderContainerClass='absolute' />
     </div>
   )
 }

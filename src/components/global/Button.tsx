@@ -44,7 +44,7 @@ const Button: FC<ButtonProps> = (props) => {
         )}
         {...otherProps}
       >
-        <Loader className='w-6 h-6' />
+        <Loader loaderContainerClass='absolute' className='w-6 h-6' />
       </button>
     )
   }
