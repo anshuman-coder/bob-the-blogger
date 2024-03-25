@@ -23,7 +23,7 @@ const SideSection: FC = () => {
       {/* Bookmarked posts */}
       <div className='w-full m-0 p-0'>
         <h3 className='my-4 text-base font-semibold'>
-          My Reading List
+          My reading list
         </h3>
         <div className='flex flex-col space-y-8'>
           {
