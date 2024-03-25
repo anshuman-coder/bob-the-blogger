@@ -3,6 +3,7 @@ import type { FC } from 'react'
 import { Search } from 'lucide-react'
 import { Button, DropDown, Loader, Input } from '~/components/global'
 import type { Option } from '~/components/global/DropDown'
+import Post from '~/components/post/Post'
 
 const OPTIONS: Option[] =[
   {
@@ -54,7 +55,10 @@ const MainSection: FC = () => {
       </div>
 
       <div className='flex w-full flex-col justify-center items-center space-y-4'>
-        <Loader />
+        {/* <Loader /> */}
+        {
+          Array.from({ length: 4 }).map((post, i) => <Post key={i} />)
+        }
       </div>
     </main>
   )
