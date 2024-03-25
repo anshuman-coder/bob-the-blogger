@@ -19,7 +19,7 @@ const OPTIONS: Option[] =[
 
 const MainSection: FC = () => {
   return (
-    <main className='col-span-8 border-r border-gray-300 px-20'>
+    <main className='col-span-8 border-r border-gray-300 px-20 overflow-y-auto pb-40'>
       <div className='w-full flex flex-col space-y-4 py-4'>
         <div className='w-full flex items-center space-x-4'>
           <Input

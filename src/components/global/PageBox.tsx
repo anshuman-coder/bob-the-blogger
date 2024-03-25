@@ -15,7 +15,7 @@ const PageBox: FC<PageBoxProps> = ({
 }) => {
   return (
     <div className={clsx(
-      'flex flex-col h-screen w-full justify-start items-center gap-y-5',
+      'flex flex-col h-screen w-full justify-start items-center gap-y-5 overflow-hidden',
       isLoading && 'relative',
     )}>
       {
