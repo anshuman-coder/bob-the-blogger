@@ -70,14 +70,18 @@ const Post = () => {
                 )
             }
           </div>
-          <div className='cursor-pointer' onClick={() => setIsBookmarked(prev => !prev)}>
+          <Button
+            variant='unstyled'
+            icon
+            onClick={() => setIsBookmarked(prev => !prev)}
+          >
             {
               isBookmarked ? 
                 <BookmarkCheck className='h-6 w-6' /> 
-                : 
+              : 
                 <BookmarkPlus className='h-6 w-6' />
             }
-          </div>
+          </Button>
         </div>
       </div>
     </div>

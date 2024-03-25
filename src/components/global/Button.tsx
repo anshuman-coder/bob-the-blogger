@@ -4,13 +4,14 @@ import type { FC, ReactNode, ButtonHTMLAttributes } from 'react'
 import Loader from './Loader'
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary'
+  variant?: 'primary' | 'secondary' | 'unstyled'
   className?: string
   circled?: boolean
   startIcon?: ReactNode
   endIcon?: ReactNode
   isLoading?: boolean
   size?: 'md' | 'lg'
+  icon?: boolean
 }
 
 const Button: FC<ButtonProps> = (props) => {
@@ -23,15 +24,18 @@ const Button: FC<ButtonProps> = (props) => {
     isLoading = false,
     size = 'md',
     children,
+    icon = false,
     ...otherProps
   } = props
 
   const classes = useMemo(() => clsx(
-    BASIC_CLASS,
-    BG_CLASS(variant),
-    BORDER_CLASS(variant),
-    TEXT_CLASS(variant, size),
-    ROUNDED_CLASS(circled),
+    clsx(variant !== 'unstyled' && 
+      BASIC_CLASS,
+      BG_CLASS(variant),
+      BORDER_CLASS(variant),
+      TEXT_CLASS(variant, size),
+      ROUNDED_CLASS(circled)
+    ),
     className,
   ), [variant, size, circled, className])
 
@@ -45,6 +49,17 @@ const Button: FC<ButtonProps> = (props) => {
         {...otherProps}
       >
         <Loader loaderContainerClass='absolute' className='w-6 h-6' />
+      </button>
+    )
+  }
+
+  if(icon) {
+    return (
+      <button
+        className={classes}
+        {...otherProps}
+      >
+        {children}
       </button>
     )
   }
