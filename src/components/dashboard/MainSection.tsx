@@ -3,7 +3,7 @@ import type { FC } from 'react'
 import { Search } from 'lucide-react'
 import { Button, DropDown, Loader, Input } from '~/components/global'
 import type { Option } from '~/components/global/DropDown'
-import Post from '~/components/post/Post'
+import { Post } from '~/components/post'
 
 const OPTIONS: Option[] =[
   {
