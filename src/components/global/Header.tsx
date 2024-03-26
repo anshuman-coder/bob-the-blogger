@@ -2,11 +2,13 @@ import React from 'react'
 import type { FC } from 'react'
 import Link from 'next/link'
 import { Menu, LogIn, SquarePen, Bell, LogOut } from 'lucide-react'
-import { useSession } from 'next-auth/react'
+import { useSession, signIn, signOut } from 'next-auth/react'
 import { Button, Loader } from '~/components/global'
+import Image from 'next/image'
+import type { Session } from 'next-auth'
 
 const Header: FC = () => {
-  const { status } = useSession()
+  const { status, data } = useSession()
   return (
     <header className='flex h-20 w-full flex-row items-center justify-between px-12 border-b border-gray-300 bg-white py-4'>
       <div className='cursor-pointer p-2 rounded-lg hover:border-[0.5px] hover:border-gray-900 hover:shadow-sm'>
@@ -16,20 +18,31 @@ const Header: FC = () => {
         Blogger
       </Link>
       {
-         status === 'authenticated' ? <AuthSection /> : status === 'loading' ? <Loading /> : <GeneralSection />
+        status === 'authenticated' && data?.user ? <AuthSection user={data.user} /> : status === 'loading' ? <Loading /> : <GeneralSection />
       }
     </header>
   )
 }
 
-const AuthSection: FC = () => {
+interface AuthSectionProps {
+  user: Session['user']
+}
+
+const AuthSection: FC<AuthSectionProps> = ({ user }) => {
   return (
     <div className='flex items-center space-x-4'>
       <div className='text-gray-600'>
         <Bell className='w-5 h-5' />
       </div>
       <div>
-        <div className='h-8 w-8 rounded-full bg-gray-200' />
+        <div className='relative h-8 w-8 rounded-full bg-gray-200'>
+          <Image
+            fill
+            src={user.image ?? '/avatar.png'}
+            alt={user.name ?? 'user-profile'}
+            className='rounded-full'
+          />
+        </div>
       </div>
       <div>
         <Button
@@ -43,6 +56,7 @@ const AuthSection: FC = () => {
         <Button
           type='button'
           startIcon={<LogOut className='w-4 h-4' />}
+          onClick={() => signOut()}
         >
           <p>Logout</p>
         </Button>
@@ -58,6 +72,7 @@ const GeneralSection: FC = () => {
         variant='primary'
         type='button'
         startIcon={<LogIn className='w-4 h-4' />}
+        onClick={() => signIn('google')}
       >
         <p>Signin</p>
       </Button>
