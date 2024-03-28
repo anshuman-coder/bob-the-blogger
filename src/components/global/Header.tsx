@@ -6,6 +6,7 @@ import { useSession, signIn, signOut } from 'next-auth/react'
 import { Button, Loader } from '~/components/global'
 import Image from 'next/image'
 import type { Session } from 'next-auth'
+import { useWrite } from '~/hooks'
 
 const Header: FC = () => {
   const { status, data } = useSession()
@@ -29,6 +30,7 @@ interface AuthSectionProps {
 }
 
 const AuthSection: FC<AuthSectionProps> = ({ user }) => {
+  const { setIsWriteOpen } = useWrite()
   return (
     <div className='flex items-center space-x-4'>
       <div className='text-gray-600'>
@@ -48,6 +50,7 @@ const AuthSection: FC<AuthSectionProps> = ({ user }) => {
         <Button
           type='button'
           startIcon={<SquarePen className='w-4 h-4' />}
+          onClick={() => setIsWriteOpen(true)}
         >
           <p>Write</p>
         </Button>
