@@ -12,6 +12,8 @@ import GoogleProvider from 'next-auth/providers/google'
 
 import { env } from '~/env';
 import { db } from '~/server/db';
+import * as UserService from '~/server/services/user'
+import { genUserName } from '~/utils/genSlug';
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -27,6 +29,7 @@ declare module 'next-auth' {
   interface User extends DefaultUser {
     id: string;
     role: UserRole
+    username: string
   }
 }
 
@@ -37,6 +40,45 @@ declare module 'next-auth' {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
+    signIn: async ({ user, account }) => {
+
+      const _user = await UserService
+        .getUserByAttribute(
+          'email', 
+          user.email, 
+          {
+            id: true,
+            username: true,
+            name: true,
+            email: true,
+            image: true,
+            role: true,
+          }
+        )
+      if(!_user) {
+        //generate username and add to database
+        const username = genUserName(user.name)
+        const newUser = await UserService.createUser({
+          username: username,
+          email: user.email,
+          name: user.name,
+          image: user.image,
+        })
+        await UserService.createAccountLink({
+          provider: account?.provider ?? '',
+          type: account?.type ?? '',
+          providerAccountId: account?.providerAccountId ?? '',
+          access_token: account?.access_token ?? '',
+          expires_at: account?.expires_at,
+          scope: account?.scope ?? '',
+          token_type: account?.token_type ?? '',
+          id_token: account?.id_token ?? '',
+          user: { connect: { id: newUser.id } }
+        })
+        return true
+      }
+      return true
+    },
     session: ({ session, user }) => ({
       ...session,
       user: {
