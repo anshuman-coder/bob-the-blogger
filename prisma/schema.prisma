@@ -15,16 +15,20 @@ datasource db {
 }
 
 model Post {
-    id        String   @id @default(cuid())
-    userId    String   @map("user_id")
-    name      String
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+    id            String   @id @default(cuid())
+    authorId      String   @map("author_id")
+    title         String   @unique
+    description   String   @db.Text
+    slug          String   @unique
+    featuredImage String?  @map("featured_image")
+    html          String?  @db.Text
+    text          String?  @db.Text
+    createdAt     DateTime @default(now()) @map("created_at")
+    updatedAt     DateTime @updatedAt @map("updated_at")
 
-    author User         @relation(fields: [userId], references: [id])
+    author User         @relation(fields: [authorId], references: [id])
     tags   PostTagMap[]
 
-    @@index([name])
     @@map("post")
 }
 
