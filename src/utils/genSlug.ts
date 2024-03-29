@@ -10,5 +10,9 @@ export const genUid = (dic: ShortUniqueIdDefaultDictionaries, len: number) => {
 
 export const genUserName = (name: string | null | undefined) => {
   if(!name) return ''
-  return slugify(name) + '-' +genUid('number', 8)
+  return slugify(name) + '-' + genUid('number', 8)
+}
+
+export const genPostSlug = (title: string) => {
+  return genUserName(title)
 }
