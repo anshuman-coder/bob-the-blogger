@@ -7,6 +7,7 @@ import { z } from 'zod'
 import dynamic from 'next/dynamic'
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 import 'react-quill/dist/quill.snow.css'
+import { api } from '~/utils/api'
 
 interface WriteModalProps extends PropsWithChildren {
   isOpen: boolean
@@ -15,14 +16,23 @@ interface WriteModalProps extends PropsWithChildren {
 
 export const writeFormSchema = z.object({
   title: z.string().max(20),
-  description: z.string().min(60).max(200),
-  text: z.string().min(100).optional(),
-  html: z.string().min(100),
+  description: z.string().min(60),
+  html: z.string().min(10),
 })
 
 export type WriteFormType = z.infer<typeof writeFormSchema>
 
 const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
+
+  const createPost = api.post.create.useMutation({
+    onSuccess: (_data) => {
+      console.log('post created successfuly!')
+      handleClose()
+    },
+    onError: (error) => {
+      console.log(error, 'error')
+    },
+  })
 
   const {
     control,
@@ -34,8 +44,8 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
   })
 
   const onSubmit = useCallback((data: WriteFormType) => {
-    console.log(data)
-  }, [])
+    createPost.mutate(data)
+  }, [createPost])
 
   const handleClose = useCallback(() => {
     reset()
