@@ -4,6 +4,8 @@ import { Input, Modal, Button } from '~/components/global'
 import { z } from 'zod'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { api } from '~/utils/api'
+import toast from 'react-hot-toast'
 
 export const CreateTagSchema = z.object({
   name: z.string().min(3),
@@ -25,14 +27,31 @@ const TagModal: FC<TagModalProps> = ({ isOpen, onClose }) => {
     resolver: zodResolver(CreateTagSchema)
   })
 
-  const onSubmit = useCallback((data: z.infer<typeof CreateTagSchema>) => {
-    console.log(data)
-  }, [])
+  const createTag = api.tag.create.useMutation()
 
   const handleClose = useCallback(() => {
     reset()
     onClose()
   }, [onClose, reset])
+
+  const onSubmit = useCallback((data: z.infer<typeof CreateTagSchema>) => {
+    return toast.promise<string>(
+      new Promise((res, rej) => {
+        createTag.mutate(data, {
+          onSuccess: () => res('Tag successfully created 🥳'),
+          onError: (err) => {
+            rej(err?.message ?? 'Something went wrong!')
+          },
+          onSettled: () => handleClose()
+        })
+      }),
+      {
+        loading: 'Creating...',
+        success: (msg) => `${msg}`,
+        error: (err) => `${err}`,
+      }
+    )
+  }, [createTag, handleClose])
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title='Create tag'>
