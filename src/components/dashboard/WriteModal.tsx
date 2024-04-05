@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import type { FC, PropsWithChildren } from 'react'
 import { Modal, Input, Button } from '~/components/global'
 import { Controller, useForm } from 'react-hook-form'
@@ -9,6 +9,7 @@ const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 import 'react-quill/dist/quill.snow.css'
 import { api } from '~/utils/api'
 import toast from 'react-hot-toast'
+import TagModal from './TagModal'
 
 interface WriteModalProps extends PropsWithChildren {
   isOpen: boolean
@@ -24,6 +25,8 @@ export const writeFormSchema = z.object({
 export type WriteFormType = z.infer<typeof writeFormSchema>
 
 const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
+
+  const [openTagForm, setOpenTagForm] = useState<boolean>(false)
 
   const createPost = api.post.create.useMutation()
 
@@ -70,7 +73,9 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
       <form
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className='w-full flex flex-col items-center justify-center space-y-2 pb-20 overflow-y-auto'>
+        <TagModal isOpen={openTagForm} onClose={() => setOpenTagForm(false)} />
+        <Button type='button' variant='secondary' circled onClick={() => setOpenTagForm(true)}>Create tag</Button>
+        <div className='w-full flex flex-col items-center justify-center space-y-2 pb-20 overflow-y-auto pt-5'>
           <Controller
             name='title'
             control={control}
