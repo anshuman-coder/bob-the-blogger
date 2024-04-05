@@ -8,6 +8,7 @@ import dynamic from 'next/dynamic'
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 import 'react-quill/dist/quill.snow.css'
 import { api } from '~/utils/api'
+import toast from 'react-hot-toast'
 
 interface WriteModalProps extends PropsWithChildren {
   isOpen: boolean
@@ -24,15 +25,7 @@ export type WriteFormType = z.infer<typeof writeFormSchema>
 
 const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
 
-  const createPost = api.post.create.useMutation({
-    onSuccess: (_data) => {
-      console.log('post created successfuly!')
-      handleClose()
-    },
-    onError: (error) => {
-      console.log(error, 'error')
-    },
-  })
+  const createPost = api.post.create.useMutation()
 
   const {
     control,
@@ -40,17 +33,37 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
     formState: { errors },
     reset,
   } = useForm<WriteFormType>({
-    resolver: zodResolver(writeFormSchema)
+    resolver: zodResolver(writeFormSchema),
+    defaultValues: {
+      description: '',
+      title: '',
+      html: ''
+    }
   })
-
-  const onSubmit = useCallback((data: WriteFormType) => {
-    createPost.mutate(data)
-  }, [createPost])
 
   const handleClose = useCallback(() => {
     reset()
     setIsOpen(false)
   }, [reset, setIsOpen])
+
+  const onSubmit = useCallback((data: WriteFormType) => {
+    return toast.promise<string>(
+      new Promise((res, rej) => {
+        createPost.mutate(data, {
+          onSuccess: () => res('Post created successfuly!'),
+          onError: (err) => {
+            rej(err?.message ?? 'Something went wrong!')
+          },
+          onSettled: () => handleClose()
+        })
+      }),
+      {
+        loading: 'Creating...',
+        success: (msg) => `${msg}`,
+        error: (err) => `${err}`
+      }
+    )
+  }, [createPost, handleClose])
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title='Write a post'>
@@ -114,6 +127,7 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
             type='submit'
             className='py-1.5 px-4'
             circled
+            disabled={createPost.isLoading}
           >
             Publish
           </Button>
@@ -122,6 +136,7 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
             circled
             onClick={handleClose}
             type='button'
+            disabled={createPost.isLoading}
           >
             Cancel
           </Button>

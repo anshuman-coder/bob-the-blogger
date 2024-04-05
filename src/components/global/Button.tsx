@@ -44,7 +44,7 @@ const Button: FC<ButtonProps> = (props) => {
       <button
         className={clsx(
           classes,
-          'relative'
+          'relative px-6'
         )}
         {...otherProps}
       >
