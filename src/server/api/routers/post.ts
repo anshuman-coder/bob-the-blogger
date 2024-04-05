@@ -4,8 +4,7 @@ import {
 } from '~/server/api/trpc';
 import { writeFormSchema } from '~/components/dashboard/WriteModal'
 import * as PostService from '~/server/services/post'
-import { genPostSlug } from '~/utils/genSlug';
-import { TRPCError } from '@trpc/server';
+import { genPostSlug } from '~/utils/genSlug'
 
 export const postRouter = createTRPCRouter({
   create: protectedProcedure

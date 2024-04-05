@@ -7,7 +7,7 @@ import {
 import { genPostSlug } from '~/utils/genSlug'
 import * as TagService from '~/server/services/tag'
 
-export const TagRouter = createTRPCRouter({
+export const tagRouter = createTRPCRouter({
   create: protectedProcedure
     .input(CreateTagSchema)
     .mutation(async ({ input, ctx }) => {
