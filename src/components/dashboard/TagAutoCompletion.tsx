@@ -6,11 +6,11 @@ import type { Tag } from '@prisma/client'
 import type { FC } from 'react'
 
 interface TagAutoCompletionProps {
-  tags: Partial<Tag>[]
+  tags: Tag[]
   onQueryChange: (query: string) => void
-  onSelected: (tags: Partial<Tag>[]) => void
+  onSelected: (tags: Tag[]) => void
   query?: string
-  selectedTags: Partial<Tag>[]
+  selectedTags: Tag[]
 }
 
 const TagAutoCompletion: FC<TagAutoCompletionProps> = ({ tags = [], onQueryChange, query = '', onSelected, selectedTags }) => {

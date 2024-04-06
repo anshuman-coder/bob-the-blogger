@@ -31,7 +31,7 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
 
   const [openTagForm, setOpenTagForm] = useState<boolean>(false)
   const [searchQuery, setSearchQuery] = useState<string>('')
-  const [selectedTags, setSelectedTags] = useState<Partial<Tag>[]>([])
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([])
 
   const createPost = api.post.create.useMutation()
   const { data: tags } = api.tag.getTags.useQuery({
@@ -46,11 +46,11 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
     () => debounce(handleQueryChange, 350), []
   ) 
 
-  const handleSelectTag = (_tags: Partial<Tag>[]) => {
+  const handleSelectTag = (_tags: Tag[]) => {
     setSelectedTags(_tags)
   }
 
-  const handleRemoveTag = useCallback((tag: Partial<Tag>) => {
+  const handleRemoveTag = useCallback((tag: Tag) => {
     setSelectedTags((prev) => prev.filter(_tag => _tag.id !== tag.id))
   }, [])
 
@@ -78,7 +78,11 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
   const onSubmit = useCallback((data: WriteFormType) => {
     return toast.promise<string>(
       new Promise((res, rej) => {
-        createPost.mutate(data, {
+        const newData = {
+          ...data,
+          tags: selectedTags.length > 0 ? selectedTags.map(t => t.id) : []
+        }
+        createPost.mutate(newData, {
           onSuccess: () => res('Post created successfuly!'),
           onError: (err) => {
             rej(err?.message ?? 'Something went wrong!')
@@ -92,7 +96,7 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
         error: (err) => `${err}`
       }
     )
-  }, [createPost, handleClose])
+  }, [createPost, handleClose, selectedTags])
 
   return (
     <Modal
