@@ -8,7 +8,7 @@ export const createTag = async (data: Prisma.TagCreateInput, select?: Prisma.Tag
   })
 }
 
-export const fetchTags = async (select?: Prisma.TagSelect, skip?: number, take?: number) => {
+export const fetchTags = async (where?: Prisma.TagWhereInput, select?: Prisma.TagSelect, skip?: number, take?: number) => {
   return db.tag.findMany({
     skip,
     take,
@@ -16,5 +16,6 @@ export const fetchTags = async (select?: Prisma.TagSelect, skip?: number, take?:
       posts: { _count: 'desc' }
     },
     select: select,
+    where: where,
   })
 }

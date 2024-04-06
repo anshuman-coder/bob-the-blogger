@@ -6,6 +6,11 @@ import {
 } from '~/server/api/trpc'
 import { genPostSlug } from '~/utils/genSlug'
 import * as TagService from '~/server/services/tag'
+import { z } from 'zod'
+
+const fetchTagSchema = z.object({
+  query: z.string().optional()
+})
 
 export const tagRouter = createTRPCRouter({
   create: protectedProcedure
@@ -27,5 +32,22 @@ export const tagRouter = createTRPCRouter({
       })
     }),
   getTags: publicProcedure
-    .query(async () => TagService.fetchTags())
+    .input(fetchTagSchema)
+    .query(async ({ input: { query } }) => TagService.fetchTags(
+      {
+        name: {
+          contains: query ?? '',
+          mode: 'insensitive'
+        },
+      },
+      {
+        id: true,
+        creator: { select: { id: true } },
+        name: true,
+        slug: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+      }
+    ))
 })

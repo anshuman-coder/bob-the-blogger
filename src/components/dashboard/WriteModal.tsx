@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import type { FC, PropsWithChildren } from 'react'
 import { Modal, Input, Button } from '~/components/global'
 import { Controller, useForm } from 'react-hook-form'
@@ -10,6 +10,9 @@ import 'react-quill/dist/quill.snow.css'
 import { api } from '~/utils/api'
 import toast from 'react-hot-toast'
 import TagModal from './TagModal'
+import TagAutoCompletion from './TagAutoCompletion'
+import { debounce } from 'lodash'
+import type { Tag } from '@prisma/client'
 
 interface WriteModalProps extends PropsWithChildren {
   isOpen: boolean
@@ -27,8 +30,29 @@ export type WriteFormType = z.infer<typeof writeFormSchema>
 const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
 
   const [openTagForm, setOpenTagForm] = useState<boolean>(false)
+  const [searchQuery, setSearchQuery] = useState<string>('')
+  const [selectedTags, setSelectedTags] = useState<Partial<Tag>[]>([])
 
   const createPost = api.post.create.useMutation()
+  const { data: tags } = api.tag.getTags.useQuery({
+    query: searchQuery
+  })
+
+  const handleQueryChange = (_query: string) => {
+    setSearchQuery(_query)
+  }
+
+  const onQueryChange = useMemo(
+    () => debounce(handleQueryChange, 350), []
+  ) 
+
+  const handleSelectTag = (_tags: Partial<Tag>[]) => {
+    setSelectedTags(_tags)
+  }
+
+  const handleRemoveTag = useCallback((tag: Partial<Tag>) => {
+    setSelectedTags((prev) => prev.filter(_tag => _tag.id !== tag.id))
+  }, [])
 
   const {
     control,
@@ -47,6 +71,8 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
   const handleClose = useCallback(() => {
     reset()
     setIsOpen(false)
+    setSelectedTags([])
+    setOpenTagForm(false)
   }, [reset, setIsOpen])
 
   const onSubmit = useCallback((data: WriteFormType) => {
@@ -69,12 +95,30 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
   }, [createPost, handleClose])
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title='Write a post'>
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title='Write a post'
+    >
+      <TagModal isOpen={openTagForm} onClose={() => setOpenTagForm(false)} />
+      <div className='my-2 flex w-full items-center gap-x-2'>
+        <TagAutoCompletion
+          tags={tags ?? []}
+          query={searchQuery}
+          onQueryChange={onQueryChange}
+          onSelected={handleSelectTag}
+          selectedTags={selectedTags}
+        />
+        <Button type='button' variant='secondary' className='px-4 text-nowrap' circled onClick={() => setOpenTagForm(true)}>Create tag</Button>
+      </div>
+      <div className='w-full flex flex-wrap items-center justify-start'>
+        {
+          selectedTags?.map((tag) => (<Button key={tag.id} variant='primary' circled className='px-4' onClick={() => handleRemoveTag(tag)}>{tag.name}</Button>))
+        }
+      </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
       >
-        <TagModal isOpen={openTagForm} onClose={() => setOpenTagForm(false)} />
-        <Button type='button' variant='secondary' circled onClick={() => setOpenTagForm(true)}>Create tag</Button>
         <div className='w-full flex flex-col items-center justify-center space-y-2 pb-20 overflow-y-auto pt-5'>
           <Controller
             name='title'

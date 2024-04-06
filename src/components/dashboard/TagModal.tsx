@@ -94,9 +94,10 @@ const TagModal: FC<TagModalProps> = ({ isOpen, onClose }) => {
         <div className='sticky w-full bottom-0 left-0 flex justify-end gap-x-4 p-4 bg-white border-t border-gray-300'>
           <Button
             variant='secondary'
-            type='submit'
+            type='button'
             className='py-1.5 px-4'
             circled
+            onClick={handleSubmit(onSubmit)}
           >
             Create
           </Button>
