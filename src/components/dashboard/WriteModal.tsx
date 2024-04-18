@@ -17,17 +17,18 @@ import type { Tag } from '@prisma/client'
 interface WriteModalProps extends PropsWithChildren {
   isOpen: boolean
   setIsOpen: (bool: boolean) => void
+  onCreate: (bool: boolean, refId?: string) => void
 }
 
 export const writeFormSchema = z.object({
-  title: z.string().max(20),
-  description: z.string().min(60),
+  title: z.string().max(20).min(5),
+  description: z.string().max(90).min(10),
   html: z.string().min(10),
 })
 
 export type WriteFormType = z.infer<typeof writeFormSchema>
 
-const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
+const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen, onCreate }) => {
 
   const [openTagForm, setOpenTagForm] = useState<boolean>(false)
   const [searchQuery, setSearchQuery] = useState<string>('')
@@ -83,7 +84,10 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
           tags: selectedTags.length > 0 ? selectedTags.map(t => t.id) : []
         }
         createPost.mutate(newData, {
-          onSuccess: () => res('Post created successfuly!'),
+          onSuccess: (post) => {
+            onCreate(true, post.id)
+            res('Post created successfuly!')
+          },
           onError: (err) => {
             rej(err?.message ?? 'Something went wrong!')
           },
@@ -96,7 +100,7 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen }) => {
         error: (err) => `${err}`
       }
     )
-  }, [createPost, handleClose, selectedTags])
+  }, [createPost, handleClose, onCreate, selectedTags])
 
   return (
     <Modal

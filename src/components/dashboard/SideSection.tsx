@@ -5,7 +5,7 @@ import { Card as UserCard } from '~/components/user'
 
 const SideSection: FC = () => {
   return (
-    <aside className='col-span-4 flex flex-col space-y-2 items-center p-6 overflow-y-auto'>
+    <aside className='col-span-4 flex flex-col space-y-2 items-center p-6 overflow-y-auto pb-40'>
       {/* people you may interested in */}
       <div className='w-full m-0 p-0'>
         <h3 className='my-4 text-base font-semibold'>
