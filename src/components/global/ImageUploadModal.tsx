@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { ImageUp, XCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { api } from '~/utils/api'
-import supabase from '~/config/supabase'
+import { useUpload } from '~/hooks'
 
 interface ImageUploadModalProps {
   refId?: string
@@ -16,50 +16,54 @@ interface ImageUploadModalProps {
 
 const ImageUploadModal: FC<ImageUploadModalProps> = ({ isOpen, onResolve, refId }) => {
 
+  const { upload, isLoading: isUploading } = useUpload()
+
   const uploadFeatureImage = api.post.updateFeatureImage.useMutation()
 
   const [image, setImage] = useState<Blob>()
-  const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const handleClose = useCallback(() => {
     setImage(undefined)
-    setIsUploading(false)
     onResolve()
   }, [onResolve])
 
   const handleUpload = async (_image: Blob | undefined) => {
-    setIsUploading(true)
     if(_image && refId) {
-      const { data: imageData, error } = await supabase.storage.from('feature_image').upload(`/public/${refId}.${_image.type.replace('image/', '')}`, _image)
 
-      if(error) {
-        toast.error(error.message)
-        setIsUploading(false)
-        return
-      }
-      return toast.promise<string>(
-        new Promise((res, rej) => {
-          const data = {
-            postId: refId,
-            imageUrl: imageData.path,
-          }
-          uploadFeatureImage.mutate(data, {
-            onSuccess: () => {
-              res('Image uploaded successfully!')
-              handleClose()
-            },
-            onError: (err) => {
-              rej(err.message)
-              setIsUploading(false)
-            }
-          })
-        }),
-        {
-          loading: 'Uploading...',
-          success: (msg) => `${msg}`,
-          error: (err) => `${err}`,
+      await upload({
+        _file: _image,
+        _for: 'post',
+        _refId: refId,
+      }, async ({ data: imageData, error }) => {
+        if(error) {
+          toast.error(error.message)
+          return
         }
-      )
+
+        await toast.promise<string>(
+          new Promise((res, rej) => {
+            const edit = {
+              postId: refId,
+              imageUrl: imageData.path,
+            }
+            uploadFeatureImage.mutate(edit, {
+              onSuccess: () => {
+                res('Image uploaded successfully!')
+                handleClose()
+              },
+              onError: (err) => {
+                rej(err.message)
+              }
+            })
+          }),
+          {
+            loading: 'Uploading...',
+            success: (msg) => `${msg}`,
+            error: (err) => `${err}`,
+          }
+        )
+      })
+      return
     }
     toast.error('No image selected!')
     return 
