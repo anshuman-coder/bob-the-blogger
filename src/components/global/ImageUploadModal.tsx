@@ -44,7 +44,7 @@ const ImageUploadModal: FC<ImageUploadModalProps> = ({ isOpen, onResolve, refId 
           new Promise((res, rej) => {
             const edit = {
               postId: refId,
-              imageUrl: imageData.path,
+              imageUrl: imageData.fullPath,
             }
             uploadFeatureImage.mutate(edit, {
               onSuccess: () => {

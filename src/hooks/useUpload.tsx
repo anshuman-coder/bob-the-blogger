@@ -3,9 +3,11 @@ import supabase from '~/config/supabase'
 
 type StorageResponse = {
   data: {
-    path: string;
+    fullPath: string,
+    path: string,
+    id: string
   };
-  error: null;
+  error: null
 } | {
   data: null
   error: {
