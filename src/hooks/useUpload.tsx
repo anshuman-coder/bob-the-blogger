@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import supabase from '~/config/supabase'
+import { env } from '~/env';
 
 type StorageResponse = {
   data: {
@@ -22,6 +23,14 @@ type StorageResponse = {
 const useUpload = () => {
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const getFullPath = useCallback((path?: string) => {
+    if(path) {
+      return (env.NEXT_PUBLIC_STORAGE_URL + path).trim()
+    }
+
+    return ''
+  }, [])
 
   const uploadFeatureImage = useCallback(async (_file: File | Blob, _refId: string) => {
     const fileName = `${_refId}.${_file.type.replaceAll('image/', '')}`.trim()
@@ -70,7 +79,8 @@ const useUpload = () => {
   return useMemo(() => ({
     upload,
     isLoading,
-  }), [isLoading, upload])
+    getFullPath,
+  }), [getFullPath, isLoading, upload])
 }
 
 export default useUpload
