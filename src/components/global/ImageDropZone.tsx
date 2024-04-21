@@ -53,8 +53,13 @@ const ImageDropZone: FC<ImageDropZoneProps> = ({
       toast.error('Invalid file type!')
       return
     }
-    setNewImage(files[0])
-    onSelected(files[0] as Blob)
+
+    _file.arrayBuffer().then(ab => {
+      const blob = new Blob([new Uint8Array(ab)], { type: _file.type })
+      setNewImage(blob)
+      onSelected(blob)
+    })
+    .catch(err => console.error(err))
   }
   const handleRemove = () => {
     setNewImage(undefined)

@@ -29,14 +29,15 @@ const Button: FC<ButtonProps> = (props) => {
   } = props
 
   const classes = useMemo(() => clsx(
-    clsx(variant !== 'unstyled' && 
+    clsx(
+      className,
+      variant !== 'unstyled' && 
       BASIC_CLASS,
       BG_CLASS(variant),
       BORDER_CLASS(variant),
       TEXT_CLASS(variant, size),
       ROUNDED_CLASS(circled)
     ),
-    className,
   ), [variant, size, circled, className])
 
   if(isLoading) {
