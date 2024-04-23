@@ -1,9 +1,11 @@
 import React from 'react'
 import type { FC } from 'react'
 import { Search } from 'lucide-react'
-import { Button, DropDown, Input } from '~/components/global'
+import { Button, DropDown, Input, Loader } from '~/components/global'
 import type { Option } from '~/components/global/DropDown'
 import { Post } from '~/components/post'
+import { api } from '~/utils/api'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 const OPTIONS: Option[] =[
   {
@@ -18,8 +20,15 @@ const OPTIONS: Option[] =[
 ] 
 
 const MainSection: FC = () => {
+
+  const getPosts = api.post.getPosts.useInfiniteQuery(
+    {},
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor
+    }
+  )
   return (
-    <main className='col-span-8 border-r border-gray-300 px-20 overflow-y-auto pb-40'>
+    <main id='scrollableDiv' className='col-span-8 border-r border-gray-300 px-20 overflow-y-auto pb-40'>
       <div className='w-full flex flex-col space-y-4 py-4'>
         <div className='w-full flex items-center space-x-4'>
           <Input
@@ -53,12 +62,43 @@ const MainSection: FC = () => {
           </div>
         </div>
       </div>
-
-      <div className='flex w-full flex-col justify-center items-center space-y-4'>
-        {/* <Loader /> */}
-        {
-          Array.from({ length: 4 }).map((post, i) => <Post key={i} />)
-        }
+      <div className='flex w-full flex-col justify-center space-y-8'>
+        {getPosts.isLoading && (
+          <div className='flex h-full w-full items-center justify-center space-x-4'>
+            <div>
+              <Loader className='animate-spin' />
+            </div>
+            <div>Loading...</div>
+          </div>
+        )}
+        <InfiniteScroll
+          dataLength={
+            getPosts.data?.pages.flatMap((page) => page.posts).length ?? 0
+          }
+          next={getPosts.fetchNextPage}
+          hasMore={Boolean(!!getPosts.hasNextPage)}
+          loader={
+            <div className='flex justify-center items-center w-full h-full'>
+              <Loader className='w-4 h-4' />
+            </div>
+          }
+          endMessage={
+            <p className='text-center'>
+              <b>Yay! You have seen it all</b>
+            </p>
+          }
+          scrollableTarget='scrollableDiv'
+        >
+          <div className='flex w-full flex-col justify-center space-y-8'>
+            {
+              getPosts.isSuccess &&
+                getPosts
+                .data?.pages?.flatMap(
+                  (page) => page.posts?.map((post) => <Post key={post.id} />)
+                )
+            }
+          </div>
+        </InfiniteScroll>
       </div>
     </main>
   )
