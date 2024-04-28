@@ -1,16 +1,35 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import type { FC } from 'react'
 import Image from 'next/image'
 import { Button } from '~/components/global'
-import { type RouterOutputs } from '~/utils/api'
+import { api, type RouterOutputs } from '~/utils/api'
+import toast from 'react-hot-toast'
+import clsx from 'clsx'
 
 type UserProps = RouterOutputs['user']['getUsers'][0]
 
 const Card: FC<UserProps> = ({
+  id: userId,
   name,
   image,
   username,
+  followings,
 }) => {
+  const followUser = api.user.follow.useMutation()
+  const [following, setFollowing] = useState<boolean>(Boolean(Array.isArray(followings) ? followings.length : false))
+
+  const handleFollow = useCallback(() => {
+    followUser.mutate({ followingId: userId }, {
+      onSuccess: (data) => {
+        toast.success(data ? `You started following ${username}` : `You unfollowed ${username}`)
+        setFollowing(data)
+      },
+      onError: err => {
+        toast.error(err.message)
+      }
+    })
+  }, [followUser, userId, username])
+
   return (
     <div
       className='flex flex-row items-center justify-between pr-16'
@@ -29,7 +48,17 @@ const Card: FC<UserProps> = ({
           <p className='text-xs'>{username}</p>
         </div>
       </div>
-      <Button className='px-4'>Follow</Button>
+      <Button
+        isLoading={followUser.isLoading}
+        onClick={handleFollow}
+        className={
+          clsx(
+          followUser.isLoading ? '!px-6 !py-4' : 'px-4'
+          )
+        }
+      >
+        {following ? 'Following' : 'Follow'}
+      </Button>
     </div>
   )
 }

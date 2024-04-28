@@ -69,3 +69,29 @@ export const getUserBookmarks = async (userId: string) => {
     },
   })
 }
+
+export const followUser = async (followerId: string, followingId: string) => {
+  const checkFollowing = await db.follower.findFirst({ where: { follower: { id: followerId }, following: { id: followingId } } })
+
+  if(checkFollowing) {
+    await db.follower.delete({ where: { id: checkFollowing.id } })
+    return false
+  } else {
+    await db.follower.create({
+      data: {
+        follower: {
+          connect: {
+            id: followerId
+          }
+        },
+        following: {
+          connect: {
+            id: followingId
+          },
+        }
+      }
+    })
+
+    return true
+  }
+}

@@ -56,6 +56,7 @@ const MainSection: FC = () => {
             startIcon={<Search className='w-6 h-6' />}
             placeholder='Search...'
             type='text'
+            className='py-2'
             onChange={(e) => setSearch(e.target.value)}
           />
           <div className='flex w-full items-center justify-start gap-x-4'>
