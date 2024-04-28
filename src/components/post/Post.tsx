@@ -8,6 +8,8 @@ import { Button } from '~/components/global'
 import { BookmarkCheck, BookmarkPlus } from 'lucide-react'
 import { api, type RouterOutputs } from '~/utils/api'
 import { useUpload } from '~/hooks'
+import { useSession } from 'next-auth/react'
+import toast from 'react-hot-toast'
 
 type PostProps = RouterOutputs['post']['getPosts']['posts'][number]
 
@@ -25,13 +27,18 @@ const Post: FC<PostProps> = ({
   const [isBookmarked, setIsBookmarked] = useState<boolean>(Boolean(Array.isArray(bookmarks) ? bookmarks.length : false))
   const { getFullPath } = useUpload()
   const router = useRouter()
+  const { data: session } = useSession()
 
   const bookmarkAPI = api.post.bookmark.useMutation()
 
   const handleBookmark = useCallback(() => {
+    if(!session?.user.id) {
+      toast.error('Oops! It looks like you need to be signed in to bookmark this post.')
+      return
+    }
     bookmarkAPI.mutate({ postId })
     setIsBookmarked(prev => !prev)
-  }, [bookmarkAPI, postId])
+  }, [bookmarkAPI, postId, session?.user.id])
 
   const redirectToTag = useCallback(async (_slug: string) => {
     await router.push(`/tag/$${_slug}`)
