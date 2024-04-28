@@ -7,6 +7,7 @@ import { Post } from '~/components/post'
 import { api } from '~/utils/api'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import clsx from 'clsx'
+import { useSession } from 'next-auth/react'
 
 const OPTIONS: Option[] =[
   {
@@ -21,6 +22,8 @@ const OPTIONS: Option[] =[
 ] 
 
 const MainSection: FC = () => {
+
+  const { status } = useSession()
 
   const [search, setSearch] = useState<string>('')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
@@ -89,14 +92,18 @@ const MainSection: FC = () => {
             </div>
           </div>
         </div>
-        <div className='w-full flex justify-between items-center border-b border-gray-300 pb-8'>
-          <div>
-            Article
-          </div>
-          <div className='flex justify-center items-center'>
-            <DropDown options={OPTIONS} onSelected={handleOnPostTypeSelect} />
-          </div>
-        </div>
+        {
+          status === 'authenticated' && (
+            <div className='w-full flex justify-between items-center border-b border-gray-300 pb-8'>
+              <div>
+                Article
+              </div>
+              <div className='flex justify-center items-center'>
+                <DropDown options={OPTIONS} onSelected={handleOnPostTypeSelect} />
+              </div>
+            </div>
+          )
+        }
       </div>
       <div className='flex w-full flex-col justify-center'>
         {getPosts.isLoading && (
