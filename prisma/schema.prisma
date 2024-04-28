@@ -26,8 +26,9 @@ model Post {
     createdAt     DateTime @default(now()) @map("created_at")
     updatedAt     DateTime @updatedAt @map("updated_at")
 
-    author User         @relation(fields: [authorId], references: [id])
-    tags   PostTagMap[]
+    author    User         @relation(fields: [authorId], references: [id])
+    tags      PostTagMap[]
+    bookmarks Bookmark[]
 
     @@map("post")
 }
@@ -79,10 +80,11 @@ model User {
     createdAt     DateTime  @default(now()) @map("created_at")
     updatedAt     DateTime  @updatedAt @map("updated_at")
 
-    accounts Account[]
-    sessions Session[]
-    posts    Post[]
-    tags     Tag[]
+    accounts  Account[]
+    sessions  Session[]
+    posts     Post[]
+    tags      Tag[]
+    bookmarks Bookmark[]
 
     @@map("user")
 }
@@ -122,4 +124,17 @@ model Tag {
     posts   PostTagMap[]
 
     @@map("tag")
+}
+
+model Bookmark {
+    id        String   @id @default(cuid())
+    userId    String   @map("user_id")
+    postId    String   @map("post_id")
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    post Post @relation(fields: [postId], references: [id])
+    user User @relation(fields: [userId], references: [id])
+
+    @@map("bookmark")
 }
