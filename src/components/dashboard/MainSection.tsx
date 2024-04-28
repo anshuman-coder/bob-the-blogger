@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import type { FC } from 'react'
 import { Search } from 'lucide-react'
 import { Button, DropDown, Input, Loader } from '~/components/global'
@@ -6,6 +6,7 @@ import type { Option } from '~/components/global/DropDown'
 import { Post } from '~/components/post'
 import { api } from '~/utils/api'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import clsx from 'clsx'
 
 const OPTIONS: Option[] =[
   {
@@ -22,10 +23,25 @@ const OPTIONS: Option[] =[
 const MainSection: FC = () => {
 
   const [search, setSearch] = useState<string>('')
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+
+  const handleTagClick = useCallback((id: string) => {
+    setSelectedTags(prev => {
+      if(prev.includes(id)) {
+        return prev.filter(t => t !== id)
+      } else {
+        const newArr = [...prev, id]
+        return newArr
+      }
+    })
+  }, [])
+
+  const getTags = api.tag.getMyTags.useQuery()
 
   const getPosts = api.post.getPosts.useInfiniteQuery(
     {
       query: search,
+      tags: selectedTags,
     },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor
@@ -34,7 +50,7 @@ const MainSection: FC = () => {
   return (
     <main id='scrollableDiv' className='col-span-8 border-r border-gray-300 px-20 overflow-y-auto pb-40'>
       <div className='w-full flex flex-col space-y-4 py-4'>
-        <div className='w-full flex items-center space-x-4'>
+        <div className='w-full flex flex-col items-center gap-4'>
           <Input
             id='search'
             startIcon={<Search className='w-6 h-6' />}
@@ -42,19 +58,27 @@ const MainSection: FC = () => {
             type='text'
             onChange={(e) => setSearch(e.target.value)}
           />
-          <div className='flex w-full items-center justify-end gap-x-4'>
-            <p className='text-sm'>My topics:</p>
-            <div className='flex items-center space-x-2'>
-              {Array.from({ length: 4 }).map((_, i) => (
-                <Button
-                  key={i}
-                  circled
-                  variant='secondary'
-                  className='py-1.5 px-4'
-                >
-                  <p>tag {i} </p>
-                </Button>
-              ))}
+          <div className='flex w-full items-center justify-start gap-x-4'>
+            <p className='text-sm w-40'>My topics:</p>
+            <div className='flex items-center gap-2 flex-wrap'>
+              {
+                getTags.isSuccess && getTags.data.map((tag) => (
+                  <Button
+                    key={tag.id}
+                    circled
+                    variant='secondary'
+                    className={
+                      clsx(
+                        'py-1.5 px-4',
+                        selectedTags.includes(tag.id) && '!border !border-solid !border-gray-900'
+                      )
+                    }
+                    onClick={() => handleTagClick(tag.id)}
+                  >
+                    <p>{tag.name}</p>
+                  </Button>
+                ))
+              }
             </div>
           </div>
         </div>

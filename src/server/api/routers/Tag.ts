@@ -49,5 +49,11 @@ export const tagRouter = createTRPCRouter({
         createdAt: true,
         updatedAt: true,
       }
-    ))
+    )),
+  getMyTags: publicProcedure
+    .query(async () => TagService.fetchTags({}, {
+      id: true,
+      name: true,
+      slug: true,
+    }, 0))
 })
