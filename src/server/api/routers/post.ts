@@ -93,5 +93,15 @@ export const postRouter = createTRPCRouter({
       const { cursor } = input
       const result = await PostService.getPosts(cursor ?? '', session ?? undefined)
       return result
+    }),
+  bookmark: protectedProcedure
+    .input(z.object({
+      postId: z.string().min(1)
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const { session: { user } } = ctx
+      const { postId } = input
+
+      return PostService.bookmarkPost(user.id, postId)
     })
 });

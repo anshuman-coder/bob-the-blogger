@@ -48,6 +48,11 @@ export const getPosts = async (cursor?: string, session?: Session) => {
           image: true,
         },
       },
+      bookmarks: session?.user?.id ? {
+        where: {
+          userId: session?.user.id,
+        },
+      } : false,
       tags: {
         select: {
           tag: {
@@ -69,4 +74,28 @@ export const getPosts = async (cursor?: string, session?: Session) => {
   }
 
   return { posts: data, nextCursor }
+}
+
+export const bookmarkPost = async (userId: string, postId: string) => {
+  const whereClause: Prisma.BookmarkWhereInput = { userId, postId }
+  const checkBookmark = await db.bookmark.findFirst({ where: whereClause })
+  if(checkBookmark) {
+    //if yes then remove bookmark and return false
+    await db.bookmark.delete({
+      where: {
+        id: checkBookmark.id
+      }
+    })
+    return false
+  } else {
+    //if no bookmark the post and return true
+    await db.bookmark.create({
+      data: {
+        userId,
+        postId
+      }
+    })
+
+    return true
+  }
 }

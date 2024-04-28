@@ -6,12 +6,13 @@ import type { FC } from 'react'
 import { format } from 'date-fns'
 import { Button } from '~/components/global'
 import { BookmarkCheck, BookmarkPlus } from 'lucide-react'
-import type { RouterOutputs } from '~/utils/api'
+import { api, type RouterOutputs } from '~/utils/api'
 import { useUpload } from '~/hooks'
 
 type PostProps = RouterOutputs['post']['getPosts']['posts'][number]
 
 const Post: FC<PostProps> = ({
+  id: postId,
   author,
   createdAt,
   title,
@@ -19,10 +20,18 @@ const Post: FC<PostProps> = ({
   description,
   featuredImage,
   tags,
+  bookmarks,
 }) => {
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false)
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(Boolean(Array.isArray(bookmarks) ? bookmarks.length : false))
   const { getFullPath } = useUpload()
   const router = useRouter()
+
+  const bookmarkAPI = api.post.bookmark.useMutation()
+
+  const handleBookmark = useCallback(() => {
+    bookmarkAPI.mutate({ postId })
+    setIsBookmarked(prev => !prev)
+  }, [bookmarkAPI, postId])
 
   const redirectToTag = useCallback(async (_slug: string) => {
     await router.push(`/tag/$${_slug}`)
@@ -31,7 +40,6 @@ const Post: FC<PostProps> = ({
     <div
       className='flex flex-col space-y-4 w-full border-b border-gray-300 my-8 pb-8 last:border-none'
     >
-      {/* This has to be Next link */}
       <Link
         href={`/user/${author.username}`}
         className='group flex w-full cursor-pointer items-center space-x-2'
@@ -55,7 +63,6 @@ const Post: FC<PostProps> = ({
           <p className='text-xs'>Founder, teacher & developer</p>
         </div>
       </Link>
-      {/* this has to be NEXT link */}
       <Link
         href={`/post/${slug}`}
         className='group grid w-full h-44 grid-cols-12 gap-4 overflow-hidden'
@@ -91,7 +98,7 @@ const Post: FC<PostProps> = ({
                   variant='secondary'
                   circled
                   className='py-1.5 px-4'
-                  onClick={() => redirectToTag(tagSlug)}
+                  onClick={() => redirectToTag(tagSlug as string)}
                 >
                   <p>{name}</p>
                 </Button>
@@ -101,7 +108,7 @@ const Post: FC<PostProps> = ({
           <Button
             variant='unstyled'
             icon
-            onClick={() => setIsBookmarked(prev => !prev)}
+            onClick={handleBookmark}
           >
             {
               isBookmarked ? 
