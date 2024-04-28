@@ -12,7 +12,8 @@ import { TRPCError } from '@trpc/server'
 export const PostQuery = z.object({
   cursor: z.string().nullish(),
   query: z.string().nullish(),
-  tags: z.array(z.string()).min(0).nullish()
+  tags: z.array(z.string()).min(0).nullish(),
+  type: z.enum(['all', 'following'])
 })
 
 
@@ -94,11 +95,12 @@ export const postRouter = createTRPCRouter({
   getPosts: publicProcedure
     .input(PostQuery)
     .query(async ({ input, ctx: { session } }) => {
-      const { cursor, query, tags } = input
+      const { cursor, query, tags, type } = input
       const result = await PostService.getPosts({
         cursor,
         query,
-        tags
+        tags,
+        type
       }, session ?? undefined)
       return result
     }),

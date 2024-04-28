@@ -6,7 +6,7 @@ import { ChevronDown } from 'lucide-react'
 
 export type Option = {
   label: string
-  value: string
+  value: 'all' | 'following'
   isDefault?: boolean
 }
 

@@ -12,11 +12,11 @@ const OPTIONS: Option[] =[
   {
     label: 'All',
     value: 'all',
+    isDefault: true
   },
   {
     label: 'Following',
     value: 'following',
-    isDefault: true
   }
 ] 
 
@@ -24,6 +24,11 @@ const MainSection: FC = () => {
 
   const [search, setSearch] = useState<string>('')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [postType, setPostType] = useState<Option['value']>('all')
+
+  const handleOnPostTypeSelect = useCallback((value: Option) => {
+    setPostType(value.value)
+  }, [])
 
   const handleTagClick = useCallback((id: string) => {
     setSelectedTags(prev => {
@@ -42,6 +47,7 @@ const MainSection: FC = () => {
     {
       query: search,
       tags: selectedTags,
+      type: postType
     },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor
@@ -88,7 +94,7 @@ const MainSection: FC = () => {
             Article
           </div>
           <div className='flex justify-center items-center'>
-            <DropDown options={OPTIONS} />
+            <DropDown options={OPTIONS} onSelected={handleOnPostTypeSelect} />
           </div>
         </div>
       </div>

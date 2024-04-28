@@ -22,7 +22,7 @@ interface WriteModalProps extends PropsWithChildren {
 
 export const writeFormSchema = z.object({
   title: z.string().max(20).min(5),
-  description: z.string().min(10).max(900),
+  description: z.string().min(10),
   html: z.string().min(10),
 })
 

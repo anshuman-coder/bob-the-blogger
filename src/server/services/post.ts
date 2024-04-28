@@ -31,7 +31,7 @@ export const updatePost = async (id: string, update: Prisma.PostUpdateInput, sel
 }
 
 export const getPosts = async (filters: PostQueryType, session?: Session) => {
-  const { cursor, query = '', tags = [] } = filters
+  const { cursor, query = '', tags = [], type = 'all' } = filters
 
   const querySeach: Prisma.PostWhereInput[] = [
     {
@@ -62,6 +62,13 @@ export const getPosts = async (filters: PostQueryType, session?: Session) => {
     cursor: cursor ? { id: cursor } : undefined,
     take: LIMIT + 1,
     where: {
+      author: type === 'following' && session?.user.id ? {
+        followings: {
+          some: {
+            followerId: session?.user.id
+          }
+        },
+      }: undefined,
       tags: (tags?.length) ? {
         some: {
           tagId: {
