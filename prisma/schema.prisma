@@ -80,11 +80,13 @@ model User {
     createdAt     DateTime  @default(now()) @map("created_at")
     updatedAt     DateTime  @updatedAt @map("updated_at")
 
-    accounts  Account[]
-    sessions  Session[]
-    posts     Post[]
-    tags      Tag[]
-    bookmarks Bookmark[]
+    accounts   Account[]
+    sessions   Session[]
+    posts      Post[]
+    tags       Tag[]
+    bookmarks  Bookmark[]
+    followers  Follower[] @relation("user_follower")
+    followings Follower[] @relation("user_following")
 
     @@map("user")
 }
@@ -137,4 +139,16 @@ model Bookmark {
     user User @relation(fields: [userId], references: [id])
 
     @@map("bookmark")
+}
+
+model Follower {
+    id          String   @id @default(cuid())
+    followerId  String   @map("follower_id")
+    followingId String   @map("following_id")
+    createdAt   DateTime @default(now()) @map("created_at")
+
+    follower  User @relation("user_follower", fields: [followerId], references: [id])
+    following User @relation("user_following", fields: [followingId], references: [id])
+
+    @@map("follower")
 }
