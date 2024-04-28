@@ -62,7 +62,7 @@ const MainSection: FC = () => {
           </div>
         </div>
       </div>
-      <div className='flex w-full flex-col justify-center space-y-8'>
+      <div className='flex w-full flex-col justify-center'>
         {getPosts.isLoading && (
           <div className='flex h-full w-full items-center justify-center space-x-4'>
             <div>
@@ -93,7 +93,7 @@ const MainSection: FC = () => {
             getPosts.isSuccess &&
               getPosts
               .data?.pages?.flatMap(
-                (page) => page.posts?.map((post) => <Post key={post.id} />)
+                (page) => page.posts?.map((post) => <Post {...post} key={post.id} />)
               )
           
           }
