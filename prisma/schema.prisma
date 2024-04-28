@@ -146,6 +146,7 @@ model Follower {
     followerId  String   @map("follower_id")
     followingId String   @map("following_id")
     createdAt   DateTime @default(now()) @map("created_at")
+    updatedAt   DateTime @updatedAt @map("updated_at")
 
     follower  User @relation("user_follower", fields: [followerId], references: [id])
     following User @relation("user_following", fields: [followingId], references: [id])
