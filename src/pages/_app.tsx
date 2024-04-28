@@ -7,6 +7,7 @@ import { api } from '~/utils/api'
 
 import '~/styles/globals.css'
 import { Level_1_providers } from '~/components/global'
+import clsx from 'clsx'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -20,7 +21,12 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <Level_1_providers>
-        <main className={`font-sans ${inter.variable}`}>
+        <main className={
+          clsx(
+            'font-sans',
+            inter.variable,
+          )
+        }>
           <Component {...pageProps} />
         </main>
       </Level_1_providers>
