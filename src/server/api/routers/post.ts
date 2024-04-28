@@ -9,6 +9,11 @@ import { genPostSlug } from '~/utils/genSlug'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
 
+export const PostQuery = z.object({
+  cursor: z.string().nullish(),
+  query: z.string().nullish(),
+})
+
 
 export const postRouter = createTRPCRouter({
   create: protectedProcedure
@@ -86,12 +91,13 @@ export const postRouter = createTRPCRouter({
       }
     }),
   getPosts: publicProcedure
-    .input(z.object({
-      cursor: z.string().nullish(),
-    }))
+    .input(PostQuery)
     .query(async ({ input, ctx: { session } }) => {
-      const { cursor } = input
-      const result = await PostService.getPosts(cursor ?? '', session ?? undefined)
+      const { cursor, query } = input
+      const result = await PostService.getPosts({
+        cursor,
+        query,
+      }, session ?? undefined)
       return result
     }),
   bookmark: protectedProcedure

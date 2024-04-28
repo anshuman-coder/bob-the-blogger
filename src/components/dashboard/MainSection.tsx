@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import type { FC } from 'react'
 import { Search } from 'lucide-react'
 import { Button, DropDown, Input, Loader } from '~/components/global'
@@ -21,8 +21,12 @@ const OPTIONS: Option[] =[
 
 const MainSection: FC = () => {
 
+  const [search, setSearch] = useState<string>('')
+
   const getPosts = api.post.getPosts.useInfiniteQuery(
-    {},
+    {
+      query: search,
+    },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor
     }
@@ -36,6 +40,7 @@ const MainSection: FC = () => {
             startIcon={<Search className='w-6 h-6' />}
             placeholder='Search...'
             type='text'
+            onChange={(e) => setSearch(e.target.value)}
           />
           <div className='flex w-full items-center justify-end gap-x-4'>
             <p className='text-sm'>My topics:</p>

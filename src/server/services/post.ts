@@ -2,6 +2,11 @@ import type { Prisma } from '@prisma/client'
 import type { Session } from 'next-auth'
 import { db } from '~/server/db'
 import { LIMIT } from '~/utils/constant'
+import { type z } from 'zod'
+
+import { type PostQuery } from '~/server/api/routers/post'
+
+type PostQueryType = z.infer<typeof PostQuery>
 
 export const createPost = async (data: Prisma.PostCreateInput, select?: Prisma.PostSelect) => {
   return db.post.create({
@@ -25,14 +30,40 @@ export const updatePost = async (id: string, update: Prisma.PostUpdateInput, sel
   })
 }
 
-export const getPosts = async (cursor?: string, session?: Session) => {
-  console.log(session)
+export const getPosts = async (filters: PostQueryType, session?: Session) => {
+  const { cursor, query = '' } = filters
+
+  const querySeach: Prisma.PostWhereInput[] = [
+    {
+      title: {
+        contains: query ?? '',
+        mode: 'insensitive'
+      },
+    },
+    {
+      description: {
+        contains: query ?? '',
+        mode: 'insensitive',
+      }
+    },
+    {
+      author: {
+        name: {
+          contains: query ?? '',
+          mode: 'insensitive',
+        }
+      }
+    }
+  ]
   const data = await db.post.findMany({
     orderBy: {
       createdAt: 'desc'
     },
     cursor: cursor ? { id: cursor } : undefined,
     take: LIMIT + 1,
+    where: {
+      OR: querySeach,
+    },
     select: {
       id: true,
       slug: true,
