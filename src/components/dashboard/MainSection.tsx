@@ -89,15 +89,14 @@ const MainSection: FC = () => {
           }
           scrollableTarget='scrollableDiv'
         >
-          <div className='flex w-full flex-col justify-center space-y-8'>
-            {
-              getPosts.isSuccess &&
-                getPosts
-                .data?.pages?.flatMap(
-                  (page) => page.posts?.map((post) => <Post key={post.id} />)
-                )
-            }
-          </div>
+          {
+            getPosts.isSuccess &&
+              getPosts
+              .data?.pages?.flatMap(
+                (page) => page.posts?.map((post) => <Post key={post.id} />)
+              )
+          
+          }
         </InfiniteScroll>
       </div>
     </main>
