@@ -105,7 +105,7 @@ const Post: FC<PostProps> = ({
                   variant='secondary'
                   circled
                   className='py-1.5 px-4'
-                  onClick={() => redirectToTag(tagSlug as string)}
+                  onClick={() => redirectToTag(tagSlug)}
                 >
                   <p>{name}</p>
                 </Button>
