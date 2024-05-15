@@ -25,12 +25,16 @@ const Card: FC<CardProps> = ({
   return (
     <div className='group flex items-center space-x-4'>
       <div className='aspect-square transform h-full w-2/5 rounded-xl bg-gray-300'>
-        <Image
-          src={getFullPath(featuredImage ?? '')}
-          alt={`post-${postSlug}`}
-          fill
-          className='rounded-xl'
-        />
+        {
+          featuredImage && (
+            <Image
+              src={getFullPath(featuredImage ?? '')}
+              alt={`post-${postSlug}`}
+              fill
+              className='rounded-xl'
+            />
+          )
+        }
       </div>
       <div className='flex w-3/5 flex-col space-y-2'>
         <div className='text-sm font-semibold decoration-indigo-600 group-hover:underline'>
