@@ -3,7 +3,7 @@ import type { FC, PropsWithChildren } from 'react'
 import { Modal, Input, Button } from '~/components/global'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
+import { type z } from 'zod'
 import dynamic from 'next/dynamic'
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 import 'react-quill/dist/quill.snow.css'
@@ -13,18 +13,13 @@ import TagModal from './TagModal'
 import TagAutoCompletion from './TagAutoCompletion'
 import { debounce } from 'lodash'
 import type { Tag } from '@prisma/client'
+import { writeFormSchema } from '~/utils/schema'
 
 interface WriteModalProps extends PropsWithChildren {
   isOpen: boolean
   setIsOpen: (bool: boolean) => void
   onCreate: (bool: boolean, refId?: string) => void
 }
-
-export const writeFormSchema = z.object({
-  title: z.string().max(20).min(5),
-  description: z.string().min(10),
-  html: z.string().min(10),
-})
 
 export type WriteFormType = z.infer<typeof writeFormSchema>
 
