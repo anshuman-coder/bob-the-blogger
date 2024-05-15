@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { format } from 'date-fns'
 import { type RouterOutputs } from '~/utils/api'
 import { useUpload } from '~/hooks'
+import Link from 'next/link'
 
 type CardProps = RouterOutputs['user']['getReadingList'][0]
 
@@ -37,9 +38,11 @@ const Card: FC<CardProps> = ({
         }
       </div>
       <div className='flex w-3/5 flex-col space-y-2'>
-        <div className='text-sm font-semibold decoration-indigo-600 group-hover:underline'>
-          {title}
-        </div>
+        <Link href={`/post/${postSlug}`}>
+          <div className='text-sm font-semibold decoration-indigo-600 group-hover:underline'>
+            {title}
+          </div>
+        </Link>
         <div className='truncate text-xs'>
           {description}
         </div>
