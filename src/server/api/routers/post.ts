@@ -3,23 +3,16 @@ import {
   protectedProcedure,
   publicProcedure,
 } from '~/server/api/trpc'
-import { writeFormSchema } from '~/components/dashboard/WriteModal'
 import * as PostService from '~/server/services/post'
 import { genPostSlug } from '~/utils/genSlug'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
-
-export const PostQuery = z.object({
-  cursor: z.string().nullish(),
-  query: z.string().nullish(),
-  tags: z.array(z.string()).min(0).nullish(),
-  type: z.enum(['all', 'following'])
-})
+import * as Schema from '~/utils/schema'
 
 
 export const postRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(writeFormSchema.extend({ tags: z.array(z.string()).min(0) }))
+    .input(Schema.writeFormSchema.extend({ tags: z.array(z.string()).min(0) }))
     .mutation(async ({ input, ctx }) => {
       const { session: { user } } = ctx
       const slug = genPostSlug(input.title)
@@ -93,7 +86,7 @@ export const postRouter = createTRPCRouter({
       }
     }),
   getPosts: publicProcedure
-    .input(PostQuery)
+    .input(Schema.PostQuery)
     .query(async ({ input, ctx: { session } }) => {
       const { cursor, query, tags, type } = input
       const result = await PostService.getPosts({
@@ -103,6 +96,31 @@ export const postRouter = createTRPCRouter({
         type
       }, session ?? undefined)
       return result
+    }),
+  getPost: publicProcedure
+    .input(Schema.getSinglePost)
+    .query(async ({ input }) => {
+      const { slug } = input
+      return PostService.getPostBySlug(slug, {
+        id: true,
+        title: true,
+        description: true,
+        slug: true,
+        featuredImage: true,
+        html: true,
+        text: true,
+        createdAt: true,
+        updatedAt: true,
+        author: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            image: true,
+            role: true,
+          },
+        },
+      })
     }),
   bookmark: protectedProcedure
     .input(z.object({

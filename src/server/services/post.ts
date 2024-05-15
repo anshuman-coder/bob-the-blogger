@@ -4,9 +4,9 @@ import { db } from '~/server/db'
 import { LIMIT } from '~/utils/constant'
 import { type z } from 'zod'
 
-import { type PostQuery } from '~/server/api/routers/post'
+import type * as Schema from '~/utils/schema'
 
-type PostQueryType = z.infer<typeof PostQuery>
+type PostQueryType = z.infer<typeof Schema.PostQuery>
 
 export const createPost = async (data: Prisma.PostCreateInput, select?: Prisma.PostSelect) => {
   return db.post.create({
@@ -125,7 +125,6 @@ export const bookmarkPost = async (userId: string, postId: string) => {
   const whereClause: Prisma.BookmarkWhereInput = { userId, postId }
   const checkBookmark = await db.bookmark.findFirst({ where: whereClause })
   if(checkBookmark) {
-    //if yes then remove bookmark and return false
     await db.bookmark.delete({
       where: {
         id: checkBookmark.id
@@ -133,7 +132,6 @@ export const bookmarkPost = async (userId: string, postId: string) => {
     })
     return false
   } else {
-    //if no bookmark the post and return true
     await db.bookmark.create({
       data: {
         userId,
@@ -143,4 +141,13 @@ export const bookmarkPost = async (userId: string, postId: string) => {
 
     return true
   }
+}
+
+export const getPostBySlug = async (slug: string, select?: Prisma.PostSelect) => {
+  return db.post.findUnique({
+    where: {
+      slug,
+    },
+    select,
+  })
 }
