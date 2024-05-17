@@ -1,4 +1,4 @@
-import { Heart, ImagePlus } from 'lucide-react'
+import { Heart, ImagePlus, MessageCircle } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -16,6 +16,7 @@ export default function Post() {
   const { getFullPath } = useUpload()
   
   const [isLike, setIsLike] = useState<boolean>(false)
+  const [isCommentOpen, setIsCommentOpen] = useState<boolean>(false)
 
   const { isLoading, data: post, isSuccess } = api.post.getPost.useQuery({
     slug: (router.query?.slug ?? '') as string
@@ -29,7 +30,12 @@ export default function Post() {
           status === 'authenticated' && isSuccess && (
             <div className='fixed bottom-10 flex w-full items-center justify-center'>
               <div className='group flex items-center justify-center gap-x-2 rounded-full border border-gray-400 bg-white px-3 py-1.5 shadow-xl transition duration-300 hover:border-gray-900'>
-                <Button onClick={() => setIsLike(p => !p)} icon variant='unstyled'>
+                <Button
+                  icon
+                  variant='unstyled'
+                  className='!px-1'
+                  onClick={() => setIsLike(p => !p)}
+                >
                   <div className='border-r pr-4 border-solid transition duration-300 group-hover:border-gray-900'>
                     {
                       isLike ? (
@@ -40,8 +46,18 @@ export default function Post() {
                     }
                   </div>
                 </Button>
-                <Button icon variant='unstyled'>
-                  <Heart className='cursor-pointer text-xl text-red-600' fill='#dc2626'/>
+                <Button
+                  icon
+                  variant='unstyled'
+                  onClick={() => setIsCommentOpen(p => !p)} className='!px-1'
+                >
+                  {
+                    isCommentOpen ? (
+                      <MessageCircle className='cursor-pointer text-xl text-orange-500' fill='#FA7315' />
+                    ): (
+                      <MessageCircle className='cursor-pointer text-xl text-orange-500' />
+                    )
+                  }
                 </Button>
               </div>
             </div>
@@ -61,7 +77,7 @@ export default function Post() {
               </div>
             ) : (
               <div className='flex h-full w-full flex-col justify-start items-center p-10'>
-                <div className='flex w-full flex-col space-y-6'>
+                <div className='flex w-full flex-col space-y-6 max-w-screen-lg items-center'>
                   <div className='relative h-[60vh] w-full rounded-xl bg-gray-300 shadow-lg'>
                     {
                       isSuccess && post?.featuredImage && (
@@ -86,11 +102,15 @@ export default function Post() {
                       </div>
                     </div>
                   </div>
-                  <div className='border-l-4 border-gray-800 pl-6'>
-                    {post?.description}
-                  </div>
-                  <div className='prose lg:prose-xl'>
-                    <Interweave content={post?.html} />
+                  <div className='flex flex-col justify-start items-start space-y-6'>
+                    <div className='px-6'>
+                      <div className='border-l-4 border-gray-800 pl-6'>
+                        {post?.description}
+                      </div>
+                    </div>
+                    <div className='prose lg:prose-xl'>
+                      <Interweave content={post?.html} />
+                    </div>
                   </div>
                 </div>
               </div>
