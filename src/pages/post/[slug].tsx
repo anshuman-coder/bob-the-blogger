@@ -7,7 +7,8 @@ import { useUpload } from '~/hooks'
 import { api } from '~/utils/api'
 import { Interweave } from 'interweave'
 import clsx from 'clsx'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
+import toast from 'react-hot-toast'
 
 export default function Post() {
   const router = useRouter()
@@ -22,6 +23,32 @@ export default function Post() {
     slug: (router.query?.slug ?? '') as string
   })
 
+  const likePost = api.post.like.useMutation()
+
+  const handleLike = useCallback(() => {
+    if(post?.id) {
+      return toast.promise<string>(
+        new Promise((resolve, reject) => {
+          const likeData = { postId: post.id }
+          likePost.mutate(likeData, {
+            onSuccess: (like) => {
+              setIsLike(like)
+              resolve(like ? 'Post Liked!' : 'Post Disliked!')
+            },
+            onError: (err) => {
+              reject(err?.message ?? 'Something went wrong!')
+            }
+          })
+        }),
+        {
+          loading: 'Liking...',
+          success: (msg) => `${msg}`,
+          error: (err) => `${err}`
+        }
+      )
+    }
+  }, [likePost, post?.id])
+
   return (
     <>
       <PageHelmet title={`Post | ${router?.query?.slug as string ?? ''}`} />
@@ -34,7 +61,7 @@ export default function Post() {
                   icon
                   variant='unstyled'
                   className='!px-1'
-                  onClick={() => setIsLike(p => !p)}
+                  onClick={handleLike}
                 >
                   <div className='border-r pr-4 border-solid transition duration-300 group-hover:border-gray-900'>
                     {

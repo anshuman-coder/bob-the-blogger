@@ -144,5 +144,15 @@ export const postRouter = createTRPCRouter({
       const { postId } = input
 
       return PostService.bookmarkPost(user.id, postId)
+    }),
+  like: protectedProcedure
+    .input(z.object({
+      postId: z.string().min(1, 'postId is required!')
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const { postId } = input
+      const { session: { user } } = ctx
+
+      return PostService.likePost(user.id, postId)
     })
 });

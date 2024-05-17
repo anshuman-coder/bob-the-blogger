@@ -143,6 +143,27 @@ export const bookmarkPost = async (userId: string, postId: string) => {
   }
 }
 
+export const likePost = async (userId: string, postId: string) => {
+  const whereClause: Prisma.LikeWhereInput = { userId, postId }
+  const checkLike = await db.like.findFirst({ where: whereClause })
+
+  if(checkLike) {
+    await db.like.delete({
+      where: { id: checkLike.id }
+    })
+    return false
+  } else {
+    await db.like.create({
+      data: {
+        userId,
+        postId
+      }
+    })
+
+    return true
+  }
+}
+
 export const getPostBySlug = async (slug: string, select?: Prisma.PostSelect) => {
   return db.post.findUnique({
     where: {
