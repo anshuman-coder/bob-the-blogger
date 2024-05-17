@@ -7,16 +7,19 @@ import Header from './Header'
 interface PageBoxProps {
   isLoading?: boolean
   children: ReactNode
+  className?: string
 }
 
 const PageBox: FC<PageBoxProps> = ({
   isLoading = false,
   children,
+  className = ''
 }) => {
   return (
     <div className={clsx(
-      'flex flex-col h-screen w-full justify-start items-center gap-y-5 overflow-hidden',
+      'flex flex-col h-screen w-full justify-start items-center gap-y-5 pt-24',
       isLoading && 'relative',
+      className,
     )}>
       {
         !isLoading ? (

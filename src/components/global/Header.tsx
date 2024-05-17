@@ -11,10 +11,10 @@ import { useWrite } from '~/hooks'
 const Header: FC = () => {
   const { status, data } = useSession()
   return (
-    <header className='flex h-20 w-full flex-row items-center justify-between px-12 border-b border-gray-300 bg-white py-4'>
-      <div className='cursor-pointer p-2 rounded-lg hover:border-[0.5px] hover:border-gray-900 hover:shadow-sm'>
+    <header className='fixed top-0 left-1/2 -translate-x-1/2 flex h-20 w-full flex-row items-center justify-between px-24 border-b border-gray-300 bg-white py-4 z-header'>
+      <Button variant='unstyled' icon className='cursor-pointer p-2 rounded-lg hover:border-[0.5px] hover:border-gray-900 hover:shadow-sm'>
         <Menu className='text-2xl text-gray-600' />
-      </div>
+      </Button>
       <Link href={'/'} className='cursor-pointer select-none text-xl font-semibold text-gray-600'>
         Blogger
       </Link>

@@ -13,6 +13,9 @@ export default {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
+      zIndex: {
+        'header': '150'
+      }
     },
   },
   plugins: [],

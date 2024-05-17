@@ -104,6 +104,7 @@ export const postRouter = createTRPCRouter({
       return PostService.getPostBySlug(slug, {
         id: true,
         title: true,
+        authorId: true,
         description: true,
         slug: true,
         featuredImage: true,
@@ -111,6 +112,18 @@ export const postRouter = createTRPCRouter({
         text: true,
         createdAt: true,
         updatedAt: true,
+        tags: {
+          select: {
+            tag: {
+              select: {
+                id: true,
+                name: true,
+                description: true,
+                slug: true,
+              }
+            },
+          },
+        },
         author: {
           select: {
             id: true,

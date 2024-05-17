@@ -8,7 +8,10 @@ export default function Home() {
   return (
     <>
       <PageHelmet title={`Bob | ${data?.user?.name ?? 'Login'}`} />
-      <PageBox isLoading={Boolean(status === 'loading')}>
+      <PageBox
+        className='overflow-hidden'
+        isLoading={Boolean(status === 'loading')}
+      >
         <MainSection />
         <SideSection />
       </PageBox>
