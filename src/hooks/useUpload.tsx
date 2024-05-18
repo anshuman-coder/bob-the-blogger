@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
-import supabase from '~/config/supabase'
+import { supabaseClient as supabase } from '~/config/supabase'
 import { env } from '~/env';
+import { genUid } from '~/utils/genSlug'
 
 type StorageResponse = {
   data: {
@@ -33,7 +34,9 @@ const useUpload = () => {
   }, [])
 
   const uploadFeatureImage = useCallback(async (_file: File | Blob, _refId: string) => {
-    const fileName = `${_refId}.${_file.type.replaceAll('image/', '')}`.trim()
+
+    const uid = genUid('hex', 10)
+    const fileName = `${_refId}-${uid}.${_file.type.replaceAll('image/', '')}`.trim()
 
     const res = await supabase
       .storage
@@ -45,6 +48,15 @@ const useUpload = () => {
 
   const uploadProfileImage = useCallback(async (_file: File | Blob, _refId: string) => {
     const fileName = `${_refId}.${_file.type.replaceAll('image/', '')}`.trim()
+
+    const check = await supabase
+      .storage
+      .from('feature_image')
+      .list(`/public/${fileName}`)
+
+    if(check.data) {
+      return check
+    }
 
     const res = await supabase
       .storage

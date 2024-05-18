@@ -3,7 +3,7 @@ import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { Button, Loader, PageBox, PageHelmet } from '~/components/global'
-import { useUpload } from '~/hooks'
+import { useUpload, useWrite } from '~/hooks'
 import { api } from '~/utils/api'
 import { Interweave } from 'interweave'
 import clsx from 'clsx'
@@ -12,6 +12,7 @@ import toast from 'react-hot-toast'
 
 export default function Post() {
   const router = useRouter()
+  const { openImageUpload } = useWrite()
 
   const { status, data: authSession } = useSession()
   const { getFullPath } = useUpload()
@@ -19,9 +20,16 @@ export default function Post() {
   const [isLike, setIsLike] = useState<boolean>(false)
   const [isCommentOpen, setIsCommentOpen] = useState<boolean>(false)
 
-  const { isLoading, data: post, isSuccess } = api.post.getPost.useQuery({
+  const { isLoading, data: post, isSuccess, refetch } = api.post.getPost.useQuery({
     slug: (router.query?.slug ?? '') as string
   })
+
+  const updateImage = useCallback(async () => {
+    if(post?.id) {
+      await openImageUpload(true, post.id, getFullPath(post.featuredImage ?? ''))
+        void refetch()
+    }
+  }, [getFullPath, openImageUpload, post, refetch])
 
   const likePost = api.post.like.useMutation()
 
@@ -118,7 +126,7 @@ export default function Post() {
                     }
                     {
                       (authSession?.user?.id === post?.authorId && router.query?.slug) && (
-                        <Button variant='unstyled' icon className='absolute top-2 left-2 z-10 cursor-pointer rounded-md bg-black/50 p-2 text-white hover:bg-slate-600'>
+                        <Button onClick={updateImage} variant='unstyled' icon className='absolute top-2 left-2 z-10 cursor-pointer rounded-md bg-black/50 p-2 text-white hover:bg-slate-600'>
                           <ImagePlus className='text-2xl' />
                         </Button>
                       )

@@ -7,14 +7,18 @@ import { ImageUp, XCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { api } from '~/utils/api'
 import { useUpload } from '~/hooks'
+import clsx from 'clsx'
 
 interface ImageUploadModalProps {
   refId?: string
+  imageUrl?: string
   isOpen: boolean
-  onResolve: () => void
+  onResolve: (url: string) => void
 }
 
-const ImageUploadModal: FC<ImageUploadModalProps> = ({ isOpen, onResolve, refId }) => {
+const ImageUploadModal: FC<ImageUploadModalProps> = ({
+  isOpen, onResolve, refId, imageUrl = ''
+}) => {
 
   const { upload, isLoading: isUploading } = useUpload()
 
@@ -22,9 +26,9 @@ const ImageUploadModal: FC<ImageUploadModalProps> = ({ isOpen, onResolve, refId 
 
   const [image, setImage] = useState<Blob>()
 
-  const handleClose = useCallback(() => {
+  const handleClose = useCallback((url?: string) => {
     setImage(undefined)
-    onResolve()
+    onResolve(url ?? '')
   }, [onResolve])
 
   const handleUpload = async (_image: Blob | undefined) => {
@@ -47,9 +51,9 @@ const ImageUploadModal: FC<ImageUploadModalProps> = ({ isOpen, onResolve, refId 
               imageUrl: imageData.fullPath,
             }
             uploadFeatureImage.mutate(edit, {
-              onSuccess: () => {
+              onSuccess: (post) => {
                 res('Image uploaded successfully!')
-                handleClose()
+                handleClose(post.featuredImage ?? '')
               },
               onError: (err) => {
                 rej(err.message)
@@ -99,11 +103,22 @@ const ImageUploadModal: FC<ImageUploadModalProps> = ({ isOpen, onResolve, refId 
                     >
                       <XCircle className='w-6 h-6' />
                     </Button>
-                    <Image src={URL.createObjectURL(newImage)} alt='newImage' width={400} height={200} />
+                    <Image src={URL.createObjectURL(newImage) ?? imageUrl} alt='newImage' width={400} height={200} />
                   </div> 
                 : (
-                  <div className='w-full flex h-48 rounded-lg border border-solid border-gray-200 justify-center items-center gap-2'>
-                    <ImageUp className='w-8 h-8' /> <p className='text-sm font-normal'>Upload Image from device</p>
+                  <div className={clsx(
+                    !imageUrl && 'w-full flex h-48 rounded-lg border border-solid border-gray-200 justify-center items-center gap-2',
+                    imageUrl && 'relative'
+                  )}>
+                    {
+                      imageUrl ? (
+                        <Image src={imageUrl} alt='newImage' width={400} height={200} />
+                      ) : (
+                        <>
+                          <ImageUp className='w-8 h-8' /> <p className='text-sm font-normal'>Upload Image from device</p>
+                        </>
+                      )
+                    }
                   </div>
                 )
               }
@@ -125,10 +140,10 @@ const ImageUploadModal: FC<ImageUploadModalProps> = ({ isOpen, onResolve, refId 
         <Button
           className='py-1.5 px-4'
           circled
-          onClick={handleClose}
+          onClick={() => handleClose()}
           isLoading={isUploading}
         >
-          Skip
+          {imageUrl ? 'Cancel' : 'Skip'}
         </Button>
       </div>
     </Modal>

@@ -4,6 +4,7 @@ import {
   publicProcedure,
 } from '~/server/api/trpc'
 import * as PostService from '~/server/services/post'
+import * as UploadService from '~/server/services/upload'
 import { genPostSlug } from '~/utils/genSlug'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
@@ -43,6 +44,7 @@ export const postRouter = createTRPCRouter({
       const post = await PostService.getPost(postId, {
         id: true,
         authorId: true,
+        featuredImage: true,
       })
       if(!post) {
         throw new TRPCError({
@@ -76,6 +78,11 @@ export const postRouter = createTRPCRouter({
           html: true,
           text: true,
         })
+
+        const path = post.featuredImage?.replace('feature_image', '')
+        if(path) {
+          await UploadService.deleteFiles('feature_image', [path])
+        }
 
         return updated
       } catch (error) {
