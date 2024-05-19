@@ -5,6 +5,7 @@ import {
 } from '~/server/api/trpc'
 import * as PostService from '~/server/services/post'
 import * as UploadService from '~/server/services/upload'
+import * as CommentService from '~/server/services/comment'
 import { genPostSlug } from '~/utils/genSlug'
 import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
@@ -141,5 +142,16 @@ export const postRouter = createTRPCRouter({
       const { session: { user } } = ctx
 
       return PostService.likePost(user.id, postId)
+    }),
+  getComments: publicProcedure
+    .input(z.object({
+      postId: z.string().min(1, 'postId is required!')
+    }))
+    .query(async ({ input }) => {
+      const { postId } = input
+
+      const data = await CommentService.getCommentsByPostId(postId)
+
+      return data
     })
 });

@@ -168,11 +168,13 @@ model Like {
     post Post @relation(fields: [postId], references: [id])
     user User @relation(fields: [userId], references: [id])
 
+    @@unique([userId, postId])
     @@map("like")
 }
 
 model Comment {
     id        String   @id @default(cuid())
+    text      String   @db.Text
     postId    String   @map("post_id")
     userId    String   @map("user_id")
     createdAt DateTime @default(now()) @map("created_at")
