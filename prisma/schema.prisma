@@ -30,6 +30,7 @@ model Post {
     tags      PostTagMap[]
     bookmarks Bookmark[]
     likes     Like[]
+    comments  Comment[]
 
     @@map("post")
 }
@@ -89,6 +90,7 @@ model User {
     followers  Follower[] @relation("user_follower")
     followings Follower[] @relation("user_following")
     likes      Like[]
+    comments   Comment[]
 
     @@map("user")
 }
@@ -167,4 +169,17 @@ model Like {
     user User @relation(fields: [userId], references: [id])
 
     @@map("like")
+}
+
+model Comment {
+    id        String   @id @default(cuid())
+    postId    String   @map("post_id")
+    userId    String   @map("user_id")
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    post Post @relation(fields: [postId], references: [id])
+    user User @relation(fields: [userId], references: [id])
+
+    @@map("comment")
 }
