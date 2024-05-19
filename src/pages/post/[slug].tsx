@@ -11,6 +11,7 @@ import { useCallback, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { CommentSwiper } from '~/components/post'
 import { formatDistanceToNow } from 'date-fns'
+import Link from 'next/link'
 
 export default function Post() {
   const router = useRouter()
@@ -69,7 +70,7 @@ export default function Post() {
       follow.mutate({ followingId: id }, {
         onSuccess: (status) => {
           setIsFollowing(status)
-          toast.success(status ? `You started following ${post?.author?.username}` : `You unfollowed ${post?.author?.username}`)
+          toast.success(status ? `You started following ${post?.author?.name}` : `You unfollowed ${post?.author?.name}`)
         },
         onError: err => {
           toast.error(err.message)
@@ -88,13 +89,11 @@ export default function Post() {
       <PageBox isLoading={Boolean(status === 'loading')}>
         {
           post?.id && (
-            <>
-              <CommentSwiper
-                showComment={isCommentOpen}
-                handleClose={() => setIsCommentOpen(false)}
-                postId={post.id}
-              />
-            </>
+            <CommentSwiper
+              showComment={isCommentOpen}
+              handleClose={() => setIsCommentOpen(false)}
+              postId={post.id}
+            />
           )
         }
         {
@@ -160,18 +159,20 @@ export default function Post() {
                     </div>
                     <div className='flex flex-col justify-start items-start'>
                       <div className='flex items-center justify-start gap-x-2'>
-                        <span className='decoration-indigo-600 group-hover:underline'>{post?.author.name}</span>
-                        &#x2022;
+                        <Link href={`/user/${post?.author.username}`}><span className='decoration-indigo-600 hover:underline'>{post?.author.name}</span></Link>
                         {
                           (status === 'authenticated' && post?.authorId !== authSession.user?.id) && (
-                            <span>
-                              <Button
-                                className='px-4 py-0.5'
-                                onClick={() => handleFollow(post?.authorId ?? '')}
-                              >
-                                {isFollowing ? 'Following' : 'Follow'}
-                              </Button>
-                            </span>
+                            <>
+                              &#x2022;
+                              <span>
+                                <Button
+                                  className='px-4 py-0.5'
+                                  onClick={() => handleFollow(post?.authorId ?? '')}
+                                >
+                                  {isFollowing ? 'Following' : 'Follow'}
+                                </Button>
+                              </span>
+                            </>
                           )
                         }
                       </div>
