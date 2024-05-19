@@ -81,7 +81,12 @@ export default function Post() {
 
   useEffect(() => {
     setIsFollowing(Boolean(followStatus))
-  }, [followStatus])
+    if(Array.isArray(post?.likes)) {
+      setIsLike(Boolean(post.likes.length > 0))
+    } else {
+      setIsLike(Boolean(post?.likes))
+    }
+  }, [followStatus, post])
 
   return (
     <>

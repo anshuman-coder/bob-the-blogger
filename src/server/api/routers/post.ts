@@ -106,9 +106,14 @@ export const postRouter = createTRPCRouter({
     }),
   getPost: publicProcedure
     .input(Schema.getSinglePost)
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const { slug } = input
-      const post = await PostService.getPostBySlug(slug)
+      const { session } = ctx
+      const post = await PostService.getPostBySlug(slug, {
+        likes: session?.user?.id ? {
+          where: { user: { id: session.user.id } }
+        } : false
+      })
       if(!post) {
         throw new TRPCError({
           code: 'NOT_FOUND',
