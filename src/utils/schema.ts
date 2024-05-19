@@ -16,3 +16,7 @@ export const writeFormSchema = z.object({
   description: z.string().min(10),
   html: z.string().min(10),
 })
+
+export const CommentFormSchema = z.object({
+  text: z.string().min(3, 'Write atleast a word!')
+})

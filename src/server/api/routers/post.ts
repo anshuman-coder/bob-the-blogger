@@ -143,15 +143,36 @@ export const postRouter = createTRPCRouter({
 
       return PostService.likePost(user.id, postId)
     }),
+  comment: protectedProcedure
+    .input(Schema.CommentFormSchema.extend({
+      postId: z.string().min(1),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const { postId, text } = input
+      const { session: { user } } = ctx
+
+      return CommentService.addComment(postId, user.id, text)
+    }),
   getComments: publicProcedure
     .input(z.object({
-      postId: z.string().min(1, 'postId is required!')
+      postId: z.string().min(1, 'postId is required!'),
+      cursor: z.string().nullish(),
+    }))
+    .query(async ({ input }) => {
+      const { postId, cursor } = input
+
+      const data = await CommentService.getCommentsByPostId(postId, {}, cursor ?? '')
+
+      return data
+    }),
+    getCommentCount: publicProcedure
+    .input(z.object({
+      postId: z.string().min(1, 'postId is required!'),
     }))
     .query(async ({ input }) => {
       const { postId } = input
 
-      const data = await CommentService.getCommentsByPostId(postId)
-
-      return data
-    })
+      const { count } = await CommentService.getCommentsByPostId(postId)
+      return count
+    }),
 });

@@ -1,7 +1,17 @@
 import { Dialog, Transition } from '@headlessui/react'
+import clsx from 'clsx'
 import { MessageCircle, X } from 'lucide-react'
-import React, { Fragment, type FC } from 'react'
-import { Button } from '~/components/global'
+import React, { Fragment, useCallback, type FC } from 'react'
+import { Button, Loader } from '~/components/global'
+import { api } from '~/utils/api'
+
+import InfiniteScroll from 'react-infinite-scroll-component'
+import { CommentFormSchema } from '~/utils/schema'
+import { Controller, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { type z } from 'zod'
+import toast from 'react-hot-toast'
+import Comment from './Comment'
 
 interface SwiperProps {
   showComment: boolean
@@ -12,7 +22,41 @@ interface SwiperProps {
 const Swiper: FC<SwiperProps> = ({
   showComment,
   handleClose,
+  postId
 }) => {
+
+  const { handleSubmit, control, reset } = useForm<z.infer<typeof CommentFormSchema>>({
+    resolver: zodResolver(CommentFormSchema)
+  })
+  const getComments = api.post.getComments.useInfiniteQuery({ postId }, { getNextPageParam: (lastPage) => lastPage.nextCursor })
+  const comment = api.post.comment.useMutation()
+
+  const { data: commentCount, refetch: countRefetch } = api.post.getCommentCount.useQuery({ postId })
+
+  const handleComment = useCallback((data: z.infer<typeof CommentFormSchema>) => {
+    return toast.promise<string>(
+      new Promise((resolve, reject) => {
+        const request = { ...data, postId }
+        comment.mutate(request, {
+          onSuccess: () => {
+            reset()
+            void getComments.refetch()
+            void countRefetch()
+            resolve('Comment added successfully 🥳!')
+          },
+          onError: (err) => {
+            reject(err?.message ?? 'Something went wrong!')
+          }
+        })
+      }),
+      {
+        loading: 'Adding comment...',
+        success: (msg) => `${msg}`,
+        error: (msg) => `${msg}`
+      }
+    )
+  }, [comment, countRefetch, getComments, postId, reset])
+
   return (
     <Transition.Root show={showComment} as={Fragment}>
       <Dialog as='div' onClose={handleClose}>
@@ -26,23 +70,31 @@ const Swiper: FC<SwiperProps> = ({
             leaveTo='translate-x-full'
           >
             <Dialog.Panel className='relative h-screen w-[200px] bg-white shadow-md sm:w-[400px]'>
-              <div className='flex h-full w-full flex-col overflow-scroll px-6'>
+              <div id='comment-scroll-div' className='flex h-full w-full flex-col px-6 overflow-scroll'>
                 <div className='mt-10 mb-5 flex items-center justify-between text-xl'>
-                  <h2 className='font-medium'>Responses (4)</h2>
+                  <h2 className='font-medium'>Responses ({commentCount})</h2>
                   <Button variant='unstyled' icon className='!px-1' onClick={handleClose}>
                     <X />
                   </Button>
                 </div>
 
-                {/* form to give comments */}
                 <form
                   className='my-6 flex flex-col items-end space-y-5'
+                  onSubmit={handleSubmit(handleComment)}
                 >
-                  <textarea
-                    id='comment-input'
-                    rows={3}
-                    className='w-full rounded-xl border border-gray-300 p-4 shadow-lg outline-none focus:border-gray-600'
-                    placeholder='What are your thoughts?'
+                  <Controller
+                    control={control}
+                    name='text'
+                    render={({ field: { onChange, value } }) => (
+                      <textarea
+                        id='comment'
+                        rows={3}
+                        className='w-full rounded-xl border border-gray-300 p-4 shadow-lg outline-none focus:border-gray-600'
+                        placeholder='What are your thoughts?'
+                        value={value}
+                        onChange={onChange}
+                      />
+                    )}
                   />
                   <Button
                     type='submit'
@@ -51,28 +103,26 @@ const Swiper: FC<SwiperProps> = ({
                     Comment
                   </Button>
                 </form>
-
-                <div className='flex flex-col items-center justify-center gap-y-6'>
-                  {
-                    Array.from({ length: 4 }).map((value, i) => (
-                      <div
-                        key={i}
-                        className='flex w-full flex-col space-y-2 border-b border-b-gray-300 pb-4 last:border-none'
-                      >
-                        <div className='flex w-full items-center space-x-2 text-xs'>
-                          <div className='relative h-8 w-8 rounded-full bg-gray-400'></div>
-                          <div>
-                            <p className='font-semibold'>{`user ${i}`}</p>
-                            <p>4 mins ago</p>
-                          </div>
-                        </div>
-                        <div className='text-sm text-gray-600'>
-                          Hello world!
-                        </div>
-                      </div>
-                    ))
-                  }
-                </div>
+                <InfiniteScroll
+                  dataLength={commentCount ?? 0}
+                  next={getComments.fetchNextPage}
+                  hasMore={Boolean(!!getComments.hasNextPage)}
+                  loader={<Loader className='w-4 h-4' />}
+                  scrollableTarget='comment-scroll-div'
+                  className='w-full'
+                >
+                  <div className={clsx(
+                    'flex flex-col w-full items-center justify-start gap-y-6 overflow-hidden'
+                  )}>
+                    {
+                      getComments.isSuccess &&
+                      getComments
+                        .data?.pages?.flatMap(
+                          page => page.data.map(comment => (<Comment key={comment.id} {...comment} />))
+                        )
+                    }
+                  </div>
+                </InfiniteScroll>
               </div>
             </Dialog.Panel>
           </Transition.Child>
