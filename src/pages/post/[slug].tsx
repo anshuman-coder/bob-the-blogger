@@ -7,8 +7,10 @@ import { useUpload, useWrite } from '~/hooks'
 import { api } from '~/utils/api'
 import { Interweave } from 'interweave'
 import clsx from 'clsx'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
+import { CommentSwiper } from '~/components/post'
+import { formatDistanceToNow } from 'date-fns'
 
 export default function Post() {
   const router = useRouter()
@@ -19,10 +21,15 @@ export default function Post() {
   
   const [isLike, setIsLike] = useState<boolean>(false)
   const [isCommentOpen, setIsCommentOpen] = useState<boolean>(false)
+  const [isFollowing, setIsFollowing] = useState<boolean>(false)
 
   const { isLoading, data: post, isSuccess, refetch } = api.post.getPost.useQuery({
     slug: (router.query?.slug ?? '') as string
   })
+
+  const { data: followStatus } = api.user.isFollowing.useQuery({ followingId: post?.authorId ?? '' })
+
+  const follow = api.user.follow.useMutation()
 
   const updateImage = useCallback(async () => {
     if(post?.id) {
@@ -57,10 +64,39 @@ export default function Post() {
     }
   }, [likePost, post?.id])
 
+  const handleFollow = useCallback((id: string) => {
+    if(id) {
+      follow.mutate({ followingId: id }, {
+        onSuccess: (status) => {
+          setIsFollowing(status)
+          toast.success(status ? `You started following ${post?.author?.username}` : `You unfollowed ${post?.author?.username}`)
+        },
+        onError: err => {
+          toast.error(err.message)
+        }
+      })
+    }
+  }, [follow, post])
+
+  useEffect(() => {
+    setIsFollowing(Boolean(followStatus))
+  }, [followStatus])
+
   return (
     <>
       <PageHelmet title={`Post | ${router?.query?.slug as string ?? ''}`} />
       <PageBox isLoading={Boolean(status === 'loading')}>
+        {
+          post?.id && (
+            <>
+              <CommentSwiper
+                showComment={isCommentOpen}
+                handleClose={() => setIsCommentOpen(false)}
+                postId={post.id}
+              />
+            </>
+          )
+        }
         {
           status === 'authenticated' && isSuccess && (
             <div className='fixed bottom-10 flex w-full items-center justify-center'>
@@ -113,6 +149,41 @@ export default function Post() {
             ) : (
               <div className='flex h-full w-full flex-col justify-start items-center p-10'>
                 <div className='flex w-full flex-col space-y-6 max-w-screen-lg items-center'>
+                  <div className='flex items-center justify-start w-full gap-x-2'>
+                    <div className='relative h-8 w-8 rounded-full bg-gray-400'>
+                      <Image
+                        src={post?.author.image ?? '/avatar.png'}
+                        alt={`user-${post?.author.username}`}
+                        fill
+                        className='rounded-full'
+                      />
+                    </div>
+                    <div className='flex flex-col justify-start items-start'>
+                      <div className='flex items-center justify-start gap-x-2'>
+                        <span className='decoration-indigo-600 group-hover:underline'>{post?.author.name}</span>
+                        &#x2022;
+                        {
+                          (status === 'authenticated' && post?.authorId !== authSession.user?.id) && (
+                            <span>
+                              <Button
+                                className='px-4 py-0.5'
+                                onClick={() => handleFollow(post?.authorId ?? '')}
+                              >
+                                {isFollowing ? 'Following' : 'Follow'}
+                              </Button>
+                            </span>
+                          )
+                        }
+                      </div>
+                      <div className='flex items-center'>
+                        {
+                          post?.createdAt && (
+                            <p className='text-xs text-text-secondary'>{formatDistanceToNow(post?.createdAt, { addSuffix: true })}</p>
+                          )
+                        }
+                      </div>
+                    </div>
+                  </div>
                   <div className='relative h-[60vh] w-full rounded-xl bg-gray-300 shadow-lg'>
                     {
                       isSuccess && post?.featuredImage && (
@@ -137,6 +208,7 @@ export default function Post() {
                       </div>
                     </div>
                   </div>
+
                   <div className='flex flex-col justify-start items-start space-y-6'>
                     <div className='px-6'>
                       <div className='border-l-4 border-gray-800 pl-6'>

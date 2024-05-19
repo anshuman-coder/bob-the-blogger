@@ -14,7 +14,8 @@ export default {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       zIndex: {
-        'header': '150'
+        'header': '150',
+        'swiper': '250',
       }
     },
   },

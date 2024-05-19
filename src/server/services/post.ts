@@ -164,11 +164,44 @@ export const likePost = async (userId: string, postId: string) => {
   }
 }
 
-export const getPostBySlug = async (slug: string, select?: Prisma.PostSelect) => {
+export const getPostBySlug = async (slug: string, select: Prisma.PostSelect = {}) => {
   return db.post.findUnique({
     where: {
       slug,
     },
-    select,
+    select: {
+      id: true,
+      authorId: true,
+      title: true,
+      description: true,
+      slug: true,
+      featuredImage: true,
+      html: true,
+      text: true,
+      createdAt: true,
+      updatedAt: true,
+      tags: {
+        select: {
+          tag: {
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              slug: true,
+            }
+          },
+        },
+      },
+      author: {
+        select: {
+          id: true,
+          username: true,
+          name: true,
+          image: true,
+          role: true,
+        },
+      },
+      ...select,
+    },
   })
 }

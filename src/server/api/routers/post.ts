@@ -108,39 +108,14 @@ export const postRouter = createTRPCRouter({
     .input(Schema.getSinglePost)
     .query(async ({ input }) => {
       const { slug } = input
-      return PostService.getPostBySlug(slug, {
-        id: true,
-        title: true,
-        authorId: true,
-        description: true,
-        slug: true,
-        featuredImage: true,
-        html: true,
-        text: true,
-        createdAt: true,
-        updatedAt: true,
-        tags: {
-          select: {
-            tag: {
-              select: {
-                id: true,
-                name: true,
-                description: true,
-                slug: true,
-              }
-            },
-          },
-        },
-        author: {
-          select: {
-            id: true,
-            username: true,
-            name: true,
-            image: true,
-            role: true,
-          },
-        },
-      })
+      const post = await PostService.getPostBySlug(slug)
+      if(!post) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Post not found!'
+        })
+      }
+      return post
     }),
   bookmark: protectedProcedure
     .input(z.object({

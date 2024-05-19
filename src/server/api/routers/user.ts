@@ -47,5 +47,21 @@ export const UserRouter = createTRPCRouter({
       }
 
       return UserService.followUser(user.id, followingId)
+    }),
+  isFollowing: protectedProcedure
+    .input(z.object({
+      followingId: z.string().min(1)
+    }))
+    .query(async ({ ctx, input }) => {
+      const { session: { user }, db } = ctx
+      const { followingId } = input
+      const check = await db.follower.findFirst({
+        where: {
+          follower: { id: user.id },
+          following: { id: followingId }
+        }
+      })
+
+      return Boolean(check)
     })
 })
