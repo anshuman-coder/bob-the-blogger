@@ -37,27 +37,27 @@ export const getPosts = async (filters: PostQueryType, session?: Session) => {
     {
       title: {
         contains: query ?? '',
-        mode: 'insensitive'
+        mode: 'insensitive',
       },
     },
     {
       description: {
         contains: query ?? '',
         mode: 'insensitive',
-      }
+      },
     },
     {
       author: {
         name: {
           contains: query ?? '',
           mode: 'insensitive',
-        }
-      }
-    }
+        },
+      },
+    },
   ]
   const data = await db.post.findMany({
     orderBy: {
-      createdAt: 'desc'
+      createdAt: 'desc',
     },
     cursor: cursor ? { id: cursor } : undefined,
     take: LIMIT + 1,
@@ -65,16 +65,16 @@ export const getPosts = async (filters: PostQueryType, session?: Session) => {
       author: type === 'following' && session?.user.id ? {
         followings: {
           some: {
-            followerId: session?.user.id
-          }
+            followerId: session?.user.id,
+          },
         },
       }: undefined,
       tags: (tags?.length) ? {
         some: {
           tagId: {
             in: tags,
-          }
-        }
+          },
+        },
       } : undefined,
       OR: querySeach,
     },
@@ -127,16 +127,16 @@ export const bookmarkPost = async (userId: string, postId: string) => {
   if(checkBookmark) {
     await db.bookmark.delete({
       where: {
-        id: checkBookmark.id
-      }
+        id: checkBookmark.id,
+      },
     })
     return false
   } else {
     await db.bookmark.create({
       data: {
         userId,
-        postId
-      }
+        postId,
+      },
     })
 
     return true
@@ -149,15 +149,15 @@ export const likePost = async (userId: string, postId: string) => {
 
   if(checkLike) {
     await db.like.delete({
-      where: { id: checkLike.id }
+      where: { id: checkLike.id },
     })
     return false
   } else {
     await db.like.create({
       data: {
         userId,
-        postId
-      }
+        postId,
+      },
     })
 
     return true
@@ -188,7 +188,7 @@ export const getPostBySlug = async (slug: string, select: Prisma.PostSelect = {}
               name: true,
               description: true,
               slug: true,
-            }
+            },
           },
         },
       },

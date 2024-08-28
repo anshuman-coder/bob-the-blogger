@@ -59,7 +59,7 @@ const ImageDropZone: FC<ImageDropZoneProps> = ({
       setNewImage(blob)
       onSelected(blob)
     })
-    .catch(err => console.error(err))
+      .catch(err => console.error(err))
   }
   const handleRemove = () => {
     setNewImage(undefined)

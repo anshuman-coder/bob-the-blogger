@@ -13,7 +13,7 @@ interface PageBoxProps {
 const PageBox: FC<PageBoxProps> = ({
   isLoading = false,
   children,
-  className = ''
+  className = '',
 }) => {
   return (
     <div className={clsx(

@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useState } from 'react'
+import React, { createContext, useCallback, useMemo, useState } from 'react'
 import type { FC, PropsWithChildren } from 'react'
 import { WriteModal } from '~/components/dashboard'
 import ImageUploadModal from '~/components/global/ImageUploadModal'
@@ -26,14 +26,16 @@ const GlobalContextProvider: FC<PropsWithChildren> = ({ children }) => {
     return Promise.resolve(imageUrl ?? '')
   }, [])
 
+  const contextValues = useMemo(() => ({
+    isWriteOpen,
+    setIsWriteOpen,
+    isImageOpen: openImgModal,
+    openImageUpload: handleImageModal,
+  }), [handleImageModal, isWriteOpen, openImgModal])
+
   return (
-    <GlobalContext.Provider 
-      value={{
-        isWriteOpen,
-        setIsWriteOpen,
-        isImageOpen: openImgModal,
-        openImageUpload: handleImageModal 
-      }}
+    <GlobalContext.Provider
+      value={contextValues}
     >
       {children}
       <WriteModal isOpen={isWriteOpen} setIsOpen={setIsWriteOpen} onCreate={handleImageModal} />

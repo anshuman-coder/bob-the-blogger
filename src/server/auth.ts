@@ -1,19 +1,19 @@
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import type { UserRole } from '@prisma/client';
-import { type GetServerSidePropsContext } from 'next';
+import { PrismaAdapter } from '@auth/prisma-adapter'
+import type { UserRole } from '@prisma/client'
+import { type GetServerSidePropsContext } from 'next'
 import {
   type DefaultUser,
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
-} from 'next-auth';
-import { type Adapter } from 'next-auth/adapters';
+} from 'next-auth'
+import { type Adapter } from 'next-auth/adapters'
 import GoogleProvider from 'next-auth/providers/google'
 
-import { env } from '~/env';
-import { db } from '~/server/db';
+import { env } from '~/env'
+import { db } from '~/server/db'
 import * as UserService from '~/server/services/user'
-import { genUserName } from '~/utils/genSlug';
+import { genUserName } from '~/utils/genSlug'
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -44,8 +44,8 @@ export const authOptions: NextAuthOptions = {
 
       const _user = await UserService
         .getUserByAttribute(
-          'email', 
-          user.email, 
+          'email',
+          user.email,
           {
             id: true,
             username: true,
@@ -53,7 +53,7 @@ export const authOptions: NextAuthOptions = {
             email: true,
             image: true,
             role: true,
-          }
+          },
         )
       if(!_user) {
         //generate username and add to database
@@ -73,7 +73,7 @@ export const authOptions: NextAuthOptions = {
           scope: account?.scope ?? '',
           token_type: account?.token_type ?? '',
           id_token: account?.id_token ?? '',
-          user: { connect: { id: newUser.id } }
+          user: { connect: { id: newUser.id } },
         })
         return true
       }
@@ -84,7 +84,7 @@ export const authOptions: NextAuthOptions = {
       user: {
         ...session.user,
         id: user.id,
-        role: user?.role === 'admin' ? 'admin' : 'client'
+        role: user?.role === 'admin' ? 'admin' : 'client',
       },
     }),
   },
@@ -105,7 +105,7 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
-};
+}
 
 /**
  * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
@@ -116,5 +116,5 @@ export const getServerAuthSession = (ctx: {
   req: GetServerSidePropsContext['req'];
   res: GetServerSidePropsContext['res'];
 }) => {
-  return getServerSession(ctx.req, ctx.res, authOptions);
-};
+  return getServerSession(ctx.req, ctx.res, authOptions)
+}

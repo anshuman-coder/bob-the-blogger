@@ -11,26 +11,26 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string
 }
 
-const Input: FC<InputProps> = (props) => {
-  const {
-    id,
-    containerClass = '',
-    fullWidth = true,
-    startIcon,
-    endIcon,
-    className = '',
-    ...otherProps
-  } = props
+const Input: FC<InputProps> = ({
+  id,
+  containerClass = '',
+  fullWidth = true,
+  startIcon,
+  endIcon,
+  className = '',
+  ...otherProps
+}) => {
+
   return (
     <label
-        htmlFor={id}
-        className={
-          clsx(
-            'relative rounded-3xl border border-gray-800 pl-4',
-            containerClass,
-            fullWidth ? 'w-full' : 'w-fit',
-          )
-        }
+      htmlFor={id}
+      className={
+        clsx(
+          'relative rounded-3xl border border-gray-800 pl-4',
+          containerClass,
+          fullWidth ? 'w-full' : 'w-fit',
+        )
+      }
     >
       {
         startIcon && (

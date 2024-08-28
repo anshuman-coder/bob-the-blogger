@@ -22,11 +22,11 @@ interface SwiperProps {
 const Swiper: FC<SwiperProps> = ({
   showComment,
   handleClose,
-  postId
+  postId,
 }) => {
 
   const { handleSubmit, control, reset } = useForm<z.infer<typeof CommentFormSchema>>({
-    resolver: zodResolver(CommentFormSchema)
+    resolver: zodResolver(CommentFormSchema),
   })
   const getComments = api.post.getComments.useInfiniteQuery({ postId }, { getNextPageParam: (lastPage) => lastPage.nextCursor })
   const comment = api.post.comment.useMutation()
@@ -46,14 +46,14 @@ const Swiper: FC<SwiperProps> = ({
           },
           onError: (err) => {
             reject(err?.message ?? 'Something went wrong!')
-          }
+          },
         })
       }),
       {
         loading: 'Adding comment...',
         success: (msg) => `${msg}`,
-        error: (msg) => `${msg}`
-      }
+        error: (msg) => `${msg}`,
+      },
     )
   }, [comment, countRefetch, getComments, postId, reset])
 
@@ -112,13 +112,13 @@ const Swiper: FC<SwiperProps> = ({
                   className='w-full'
                 >
                   <div className={clsx(
-                    'flex flex-col w-full items-center justify-start gap-y-6 overflow-hidden'
+                    'flex flex-col w-full items-center justify-start gap-y-6 overflow-hidden',
                   )}>
                     {
                       getComments.isSuccess &&
                       getComments
                         .data?.pages?.flatMap(
-                          page => page.data.map(comment => (<Comment key={comment.id} {...comment} />))
+                          page => page.data.map(comment => (<Comment key={comment.id} {...comment} />)),
                         )
                     }
                   </div>

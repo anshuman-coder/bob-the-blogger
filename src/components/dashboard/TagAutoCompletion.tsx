@@ -61,7 +61,7 @@ const TagAutoCompletion: FC<TagAutoCompletionProps> = ({ tags = [], onQueryChang
                       <>
                         <span className={clsx(
                           'block truncate',
-                          selected ? 'font-medium' : 'font-normal'
+                          selected ? 'font-medium' : 'font-normal',
                         )}>
                           <p>{tag.name}</p>
                         </span>
@@ -70,7 +70,7 @@ const TagAutoCompletion: FC<TagAutoCompletionProps> = ({ tags = [], onQueryChang
                             <span className={
                               clsx(
                                 'absolute inset-y-0 left-0 flex items-center pl-3',
-                                active ? 'text-white' : 'text-teal-600'
+                                active ? 'text-white' : 'text-teal-600',
                               )
                             }>
                               <CheckCircle className='w-5 h-5' aria-hidden='true' />

@@ -12,7 +12,7 @@ export const UserRouter = createTRPCRouter({
       const { session: { user } } = ctx
       const data = await UserService.getUsers({
         id: {
-          not: user.id
+          not: user.id,
         },
         //following condition,
       }, {
@@ -22,9 +22,9 @@ export const UserRouter = createTRPCRouter({
         username: true,
         followings: user.id ? {
           where: {
-            follower: { id: user.id }
-          }
-        } : false
+            follower: { id: user.id },
+          },
+        } : false,
       }, { posts: { _count: 'desc' } }, { skip: 0, take: 4 })
       return data ?? []
     }),
@@ -37,7 +37,7 @@ export const UserRouter = createTRPCRouter({
     }),
   follow: protectedProcedure
     .input(z.object({
-      followingId: z.string().min(1)
+      followingId: z.string().min(1),
     }))
     .mutation(async ({ input, ctx }) => {
       const { followingId } = input
@@ -50,7 +50,7 @@ export const UserRouter = createTRPCRouter({
     }),
   isFollowing: protectedProcedure
     .input(z.object({
-      followingId: z.string().min(1)
+      followingId: z.string().min(1),
     }))
     .query(async ({ ctx, input }) => {
       const { session: { user }, db } = ctx
@@ -58,10 +58,10 @@ export const UserRouter = createTRPCRouter({
       const check = await db.follower.findFirst({
         where: {
           follower: { id: user.id },
-          following: { id: followingId }
-        }
+          following: { id: followingId },
+        },
       })
 
       return Boolean(check)
-    })
+    }),
 })

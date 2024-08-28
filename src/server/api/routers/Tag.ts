@@ -9,7 +9,7 @@ import * as TagService from '~/server/services/tag'
 import { z } from 'zod'
 
 const fetchTagSchema = z.object({
-  query: z.string().optional()
+  query: z.string().optional(),
 })
 
 export const tagRouter = createTRPCRouter({
@@ -37,7 +37,7 @@ export const tagRouter = createTRPCRouter({
       {
         name: {
           contains: query ?? '',
-          mode: 'insensitive'
+          mode: 'insensitive',
         },
       },
       {
@@ -48,12 +48,12 @@ export const tagRouter = createTRPCRouter({
         description: true,
         createdAt: true,
         updatedAt: true,
-      }
+      },
     )),
   getMyTags: publicProcedure
     .query(async () => TagService.fetchTags({}, {
       id: true,
       name: true,
       slug: true,
-    }, 0))
+    }, 0)),
 })

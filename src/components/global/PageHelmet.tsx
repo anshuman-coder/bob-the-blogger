@@ -1,6 +1,6 @@
 import React from 'react'
 import type { FC, ReactNode } from 'react'
-import Head from 'next/head';
+import Head from 'next/head'
 
 interface PageHelmetProps {
   title?: string

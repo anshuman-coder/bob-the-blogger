@@ -18,7 +18,7 @@ const Card: FC<CardProps> = ({
     author: {
       name,
       username,
-      image
+      image,
     },
   },
 }) => {

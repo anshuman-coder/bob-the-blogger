@@ -1,6 +1,6 @@
-import { PageHelmet, PageBox } from '~/components/global';
+import { PageHelmet, PageBox } from '~/components/global'
 import { MainSection, SideSection } from '~/components/dashboard'
-import { useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react'
 
 export default function Home() {
 
@@ -16,5 +16,5 @@ export default function Home() {
         <SideSection />
       </PageBox>
     </>
-  );
+  )
 }

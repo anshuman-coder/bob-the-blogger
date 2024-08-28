@@ -8,7 +8,7 @@ export const PostQuery = z.object({
   cursor: z.string().nullish(),
   query: z.string().nullish(),
   tags: z.array(z.string()).min(0).nullish(),
-  type: z.enum(['all', 'following'])
+  type: z.enum(['all', 'following']),
 })
 
 export const writeFormSchema = z.object({
@@ -18,5 +18,5 @@ export const writeFormSchema = z.object({
 })
 
 export const CommentFormSchema = z.object({
-  text: z.string().min(3, 'Write atleast a word!')
+  text: z.string().min(3, 'Write atleast a word!'),
 })

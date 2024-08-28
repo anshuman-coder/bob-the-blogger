@@ -1,5 +1,5 @@
 import { useSession, signIn } from 'next-auth/react'
-import React from 'react'
+import React, { useCallback } from 'react'
 import type { FC } from 'react'
 import { Card as PostCard } from '~/components/post'
 import { Card as UserCard } from '~/components/user'
@@ -12,6 +12,10 @@ const SideSection: FC = () => {
   const { isSuccess: isInterestedSuccess, data: interestedUsers } = api.user.getUsers.useQuery()
   const { isSuccess: readingListSuccess, data: readingList } = api.user.getReadingList.useQuery()
   const { status } = useSession()
+
+  const handleGoogleSignIn = useCallback(() => {
+    signIn('google')
+  }, [])
 
   return (
     <aside className='col-span-4 flex flex-col space-y-2 items-center p-6 overflow-y-auto pb-40'>
@@ -33,7 +37,7 @@ const SideSection: FC = () => {
                   variant='primary'
                   type='button'
                   startIcon={<LogIn className='w-4 h-4' />}
-                  onClick={() => signIn('google')}
+                  onClick={handleGoogleSignIn}
                 >
                   <p>Signin</p>
                 </Button>
@@ -60,7 +64,7 @@ const SideSection: FC = () => {
                   variant='primary'
                   type='button'
                   startIcon={<LogIn className='w-4 h-4' />}
-                  onClick={() => signIn('google')}
+                  onClick={handleGoogleSignIn}
                 >
                   <p>Signin</p>
                 </Button>

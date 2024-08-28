@@ -31,7 +31,7 @@ export const postRouter = createTRPCRouter({
               skipDuplicates: true,
             },
           } : undefined,
-        }
+        },
       )
     }),
   updateFeatureImage: protectedProcedure
@@ -50,13 +50,13 @@ export const postRouter = createTRPCRouter({
       if(!post) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'Post not found!'
+          message: 'Post not found!',
         })
       }
       if(user.id !== post?.authorId) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
-          message: 'You are not authorized to edit this post!'
+          message: 'You are not authorized to edit this post!',
         })
       }
 
@@ -70,7 +70,7 @@ export const postRouter = createTRPCRouter({
               id: true,
               name: true,
               username: true,
-            }
+            },
           },
           title: true,
           description: true,
@@ -89,7 +89,7 @@ export const postRouter = createTRPCRouter({
       } catch (error) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message: 'Internal server error!'
+          message: 'Internal server error!',
         })
       }
     }),
@@ -101,7 +101,7 @@ export const postRouter = createTRPCRouter({
         cursor,
         query,
         tags,
-        type
+        type,
       }, session ?? undefined)
       return result
     }),
@@ -112,20 +112,20 @@ export const postRouter = createTRPCRouter({
       const { session } = ctx
       const post = await PostService.getPostBySlug(slug, {
         likes: session?.user?.id ? {
-          where: { user: { id: session.user.id } }
-        } : false
+          where: { user: { id: session.user.id } },
+        } : false,
       })
       if(!post) {
         throw new TRPCError({
           code: 'NOT_FOUND',
-          message: 'Post not found!'
+          message: 'Post not found!',
         })
       }
       return post
     }),
   bookmark: protectedProcedure
     .input(z.object({
-      postId: z.string().min(1)
+      postId: z.string().min(1),
     }))
     .mutation(async ({ input, ctx }) => {
       const { session: { user } } = ctx
@@ -135,7 +135,7 @@ export const postRouter = createTRPCRouter({
     }),
   like: protectedProcedure
     .input(z.object({
-      postId: z.string().min(1, 'postId is required!')
+      postId: z.string().min(1, 'postId is required!'),
     }))
     .mutation(async ({ input, ctx }) => {
       const { postId } = input
@@ -165,7 +165,7 @@ export const postRouter = createTRPCRouter({
 
       return data
     }),
-    getCommentCount: publicProcedure
+  getCommentCount: publicProcedure
     .input(z.object({
       postId: z.string().min(1, 'postId is required!'),
     }))
@@ -175,4 +175,4 @@ export const postRouter = createTRPCRouter({
       const { count } = await CommentService.getCommentsByPostId(postId)
       return count
     }),
-});
+})

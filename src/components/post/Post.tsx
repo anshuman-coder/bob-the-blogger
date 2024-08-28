@@ -118,9 +118,9 @@ const Post: FC<PostProps> = ({
             onClick={handleBookmark}
           >
             {
-              isBookmarked ? 
-                <BookmarkCheck className='h-6 w-6' /> 
-              : 
+              isBookmarked ?
+                <BookmarkCheck className='h-6 w-6' />
+                :
                 <BookmarkPlus className='h-6 w-6' />
             }
           </Button>

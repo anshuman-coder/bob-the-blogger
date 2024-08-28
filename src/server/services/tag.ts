@@ -13,7 +13,7 @@ export const fetchTags = async (where?: Prisma.TagWhereInput, select?: Prisma.Ta
     skip,
     take,
     orderBy: {
-      posts: { _count: 'desc' }
+      posts: { _count: 'desc' },
     },
     select: select,
     where: where,

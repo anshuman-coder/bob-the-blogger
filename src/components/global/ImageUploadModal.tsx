@@ -17,7 +17,7 @@ interface ImageUploadModalProps {
 }
 
 const ImageUploadModal: FC<ImageUploadModalProps> = ({
-  isOpen, onResolve, refId, imageUrl = ''
+  isOpen, onResolve, refId, imageUrl = '',
 }) => {
 
   const { upload, isLoading: isUploading } = useUpload()
@@ -57,20 +57,20 @@ const ImageUploadModal: FC<ImageUploadModalProps> = ({
               },
               onError: (err) => {
                 rej(err.message)
-              }
+              },
             })
           }),
           {
             loading: 'Uploading...',
             success: (msg) => `${msg}`,
             error: (err) => `${err}`,
-          }
+          },
         )
       })
       return
     }
     toast.error('No image selected!')
-    return 
+    return
   }
 
   return (
@@ -89,7 +89,7 @@ const ImageUploadModal: FC<ImageUploadModalProps> = ({
               className='w-full h-full flex flex-col justify-center items-center cursor-pointer relative mt-5 pb-5'
             >
               {
-                newImage ? 
+                newImage ?
                   <div className='relative'>
                     <Button
                       variant='unstyled'
@@ -104,23 +104,23 @@ const ImageUploadModal: FC<ImageUploadModalProps> = ({
                       <XCircle className='w-6 h-6' />
                     </Button>
                     <Image src={URL.createObjectURL(newImage) ?? imageUrl} alt='newImage' width={400} height={200} />
-                  </div> 
-                : (
-                  <div className={clsx(
-                    !imageUrl && 'w-full flex h-48 rounded-lg border border-solid border-gray-200 justify-center items-center gap-2',
-                    imageUrl && 'relative'
-                  )}>
-                    {
-                      imageUrl ? (
-                        <Image src={imageUrl} alt='newImage' width={400} height={200} />
-                      ) : (
-                        <>
-                          <ImageUp className='w-8 h-8' /> <p className='text-sm font-normal'>Upload Image from device</p>
-                        </>
-                      )
-                    }
                   </div>
-                )
+                  : (
+                    <div className={clsx(
+                      !imageUrl && 'w-full flex h-48 rounded-lg border border-solid border-gray-200 justify-center items-center gap-2',
+                      imageUrl && 'relative',
+                    )}>
+                      {
+                        imageUrl ? (
+                          <Image src={imageUrl} alt='newImage' width={400} height={200} />
+                        ) : (
+                          <>
+                            <ImageUp className='w-8 h-8' /> <p className='text-sm font-normal'>Upload Image from device</p>
+                          </>
+                        )
+                      }
+                    </div>
+                  )
               }
             </div>
             <input {...getInputProps()} />

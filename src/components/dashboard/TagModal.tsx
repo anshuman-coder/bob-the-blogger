@@ -9,7 +9,7 @@ import toast from 'react-hot-toast'
 
 export const CreateTagSchema = z.object({
   name: z.string().min(3),
-  description: z.string().min(10)
+  description: z.string().min(10),
 })
 interface TagModalProps {
   isOpen: boolean
@@ -24,7 +24,7 @@ const TagModal: FC<TagModalProps> = ({ isOpen, onClose }) => {
     formState: { errors },
     reset,
   } = useForm<z.infer<typeof CreateTagSchema>>({
-    resolver: zodResolver(CreateTagSchema)
+    resolver: zodResolver(CreateTagSchema),
   })
 
   const createTag = api.tag.create.useMutation()
@@ -42,14 +42,14 @@ const TagModal: FC<TagModalProps> = ({ isOpen, onClose }) => {
           onError: (err) => {
             rej(err?.message ?? 'Something went wrong!')
           },
-          onSettled: () => handleClose()
+          onSettled: () => handleClose(),
         })
       }),
       {
         loading: 'Creating...',
         success: (msg) => `${msg}`,
         error: (err) => `${err}`,
-      }
+      },
     )
   }, [createTag, handleClose])
 

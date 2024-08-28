@@ -19,13 +19,13 @@ export default function Post() {
 
   const { status, data: authSession } = useSession()
   const { getFullPath } = useUpload()
-  
+
   const [isLike, setIsLike] = useState<boolean>(false)
   const [isCommentOpen, setIsCommentOpen] = useState<boolean>(false)
   const [isFollowing, setIsFollowing] = useState<boolean>(false)
 
   const { isLoading, data: post, isSuccess, refetch } = api.post.getPost.useQuery({
-    slug: (router.query?.slug ?? '') as string
+    slug: (router.query?.slug ?? '') as string,
   })
 
   const { data: followStatus } = api.user.isFollowing.useQuery({ followingId: post?.authorId ?? '' })
@@ -35,7 +35,7 @@ export default function Post() {
   const updateImage = useCallback(async () => {
     if(post?.id) {
       await openImageUpload(true, post.id, getFullPath(post.featuredImage ?? ''))
-        void refetch()
+      void refetch()
     }
   }, [getFullPath, openImageUpload, post, refetch])
 
@@ -53,14 +53,14 @@ export default function Post() {
             },
             onError: (err) => {
               reject(err?.message ?? 'Something went wrong!')
-            }
+            },
           })
         }),
         {
           loading: 'Liking...',
           success: (msg) => `${msg}`,
-          error: (err) => `${err}`
-        }
+          error: (err) => `${err}`,
+        },
       )
     }
   }, [likePost, post?.id])
@@ -74,7 +74,7 @@ export default function Post() {
         },
         onError: err => {
           toast.error(err.message)
-        }
+        },
       })
     }
   }, [follow, post])
@@ -141,7 +141,7 @@ export default function Post() {
         <main className={
           clsx(
             'col-span-12 pb-20',
-            isLoading && 'relative'
+            isLoading && 'relative',
           )
         }>
           {

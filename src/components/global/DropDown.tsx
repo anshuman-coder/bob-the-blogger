@@ -62,7 +62,7 @@ const DropDown: FC<DropDownProps> = ({ options = [], onSelected }) => {
         className='absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer'
       >
         {
-          options?.map(({value, label}, i) => (
+          options?.map(({ value, label }, i) => (
             <option key={i} value={value}>{label}</option>
           ))
         }

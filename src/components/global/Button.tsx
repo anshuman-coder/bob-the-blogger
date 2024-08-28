@@ -14,29 +14,29 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: boolean
 }
 
-const Button: FC<ButtonProps> = (props) => {
-  const {
-    variant = 'primary',
-    className = '',
-    circled = false,
-    startIcon,
-    endIcon,
-    isLoading = false,
-    size = 'md',
-    children,
-    icon = false,
-    ...otherProps
-  } = props
+const Button: FC<ButtonProps> = ({
+  variant = 'primary',
+  className = '',
+  circled = false,
+  startIcon,
+  endIcon,
+  isLoading = false,
+  size = 'md',
+  children,
+  icon = false,
+  ...otherProps
+}) => {
+
 
   const classes = useMemo(() => clsx(
     clsx(
       className,
-      variant !== 'unstyled' && 
+      variant !== 'unstyled' &&
       BASIC_CLASS,
       BG_CLASS(variant),
       BORDER_CLASS(variant),
       TEXT_CLASS(variant, size),
-      ROUNDED_CLASS(circled)
+      ROUNDED_CLASS(circled),
     ),
   ), [variant, size, circled, className])
 
@@ -45,7 +45,7 @@ const Button: FC<ButtonProps> = (props) => {
       <button
         className={clsx(
           classes,
-          'relative px-6'
+          'relative px-6',
         )}
         {...otherProps}
       >
@@ -92,20 +92,20 @@ const Button: FC<ButtonProps> = (props) => {
 const BASIC_CLASS = 'gap-x-1.5 flex justify-center items-center py-2'
 
 const ROUNDED_CLASS = (isCircled: ButtonProps['circled']) => clsx(
-  isCircled ? 'rounded-3xl' : 'rounded'
+  isCircled ? 'rounded-3xl' : 'rounded',
 )
 
 const BORDER_CLASS = (variant: ButtonProps['variant']) => clsx(
-  variant === 'primary' ? 'border border-gray-200 transition hover:border-gray-900' : 'border-none'
+  variant === 'primary' ? 'border border-gray-200 transition hover:border-gray-900' : 'border-none',
 )
 
 const TEXT_CLASS = (variant: ButtonProps['variant'], size: ButtonProps['size']) => clsx(
   variant === 'primary' ? 'hover:text-gray-900' : '',
-  size === 'md' ? 'text-sm px-2' : 'text-md px-3'
+  size === 'md' ? 'text-sm px-2' : 'text-md px-3',
 )
 
 const BG_CLASS = (variant: ButtonProps['variant']) => clsx(
-  variant === 'secondary' ? 'bg-gray-200/50' : 'bg-inherit'
+  variant === 'secondary' ? 'bg-gray-200/50' : 'bg-inherit',
 )
 
 export default Button

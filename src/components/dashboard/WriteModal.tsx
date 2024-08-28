@@ -31,7 +31,7 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen, onCreate }) => {
 
   const createPost = api.post.create.useMutation()
   const { data: tags } = api.tag.getTags.useQuery({
-    query: searchQuery
+    query: searchQuery,
   })
 
   const handleQueryChange = (_query: string) => {
@@ -39,8 +39,8 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen, onCreate }) => {
   }
 
   const onQueryChange = useMemo(
-    () => debounce(handleQueryChange, 350), []
-  ) 
+    () => debounce(handleQueryChange, 350), [],
+  )
 
   const handleSelectTag = (_tags: Tag[]) => {
     setSelectedTags(_tags)
@@ -60,8 +60,8 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen, onCreate }) => {
     defaultValues: {
       description: '',
       title: '',
-      html: ''
-    }
+      html: '',
+    },
   })
 
   const handleClose = useCallback(() => {
@@ -76,7 +76,7 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen, onCreate }) => {
       new Promise((res, rej) => {
         const newData = {
           ...data,
-          tags: selectedTags.length > 0 ? selectedTags.map(t => t.id) : []
+          tags: selectedTags.length > 0 ? selectedTags.map(t => t.id) : [],
         }
         createPost.mutate(newData, {
           onSuccess: (post) => {
@@ -86,14 +86,14 @@ const WriteModal: FC<WriteModalProps> = ({ isOpen, setIsOpen, onCreate }) => {
           onError: (err) => {
             rej(err?.message ?? 'Something went wrong!')
           },
-          onSettled: () => handleClose()
+          onSettled: () => handleClose(),
         })
       }),
       {
         loading: 'Creating...',
         success: (msg) => `${msg}`,
-        error: (err) => `${err}`
-      }
+        error: (err) => `${err}`,
+      },
     )
   }, [createPost, handleClose, onCreate, selectedTags])
 

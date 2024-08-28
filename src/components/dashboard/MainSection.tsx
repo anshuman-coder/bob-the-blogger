@@ -13,13 +13,13 @@ const OPTIONS: Option[] =[
   {
     label: 'All',
     value: 'all',
-    isDefault: true
+    isDefault: true,
   },
   {
     label: 'Following',
     value: 'following',
-  }
-] 
+  },
+]
 
 const MainSection: FC = () => {
 
@@ -50,11 +50,11 @@ const MainSection: FC = () => {
     {
       query: search,
       tags: selectedTags,
-      type: postType
+      type: postType,
     },
     {
-      getNextPageParam: (lastPage) => lastPage.nextCursor
-    }
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    },
   )
   return (
     <main id='scrollableDiv' className='col-span-8 border-r border-gray-300 px-20 overflow-y-auto pb-40'>
@@ -80,7 +80,7 @@ const MainSection: FC = () => {
                     className={
                       clsx(
                         'py-1.5 px-4',
-                        selectedTags.includes(tag.id) && '!border !border-solid !border-gray-900'
+                        selectedTags.includes(tag.id) && '!border !border-solid !border-gray-900',
                       )
                     }
                     onClick={() => handleTagClick(tag.id)}
@@ -135,10 +135,10 @@ const MainSection: FC = () => {
           {
             getPosts.isSuccess &&
               getPosts
-              .data?.pages?.flatMap(
-                (page) => page.posts?.map((post) => <Post {...post} key={post.id} />)
-              )
-          
+                .data?.pages?.flatMap(
+                  (page) => page.posts?.map((post) => <Post {...post} key={post.id} />),
+                )
+
           }
         </InfiniteScroll>
       </div>

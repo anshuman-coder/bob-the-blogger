@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import { supabaseClient as supabase } from '~/config/supabase'
-import { env } from '~/env';
+import { env } from '~/env'
 import { genUid } from '~/utils/genSlug'
 
 type StorageResponse = {
@@ -67,7 +67,7 @@ const useUpload = () => {
   }, [])
 
   /**
-   * @description 
+   * @description
    * This function will be used to universalize the upload file function
    * on client side.
    * @param {object} _config - will have _file, _for and _refId(this could be postId or userId)

@@ -5,13 +5,13 @@ import { LIMIT } from '~/utils/constant'
 export const getCommentsByPostId = async (id: string, select: Prisma.CommentSelect = {}, cursor?: string) => {
   const post = await db.post.findUnique({
     where: {
-      id
+      id,
     },
     select: {
       _count: {
         select: {
           comments: true,
-        }
+        },
       },
       comments: {
         orderBy: { createdAt: 'asc' },
@@ -32,8 +32,8 @@ export const getCommentsByPostId = async (id: string, select: Prisma.CommentSele
           updatedAt: true,
         },
         ...select,
-      }
-    }
+      },
+    },
   })
 
   if(!post) throw new Error('Post not found!')
@@ -65,7 +65,7 @@ export const addComment = async (postId: string, userId: string, text: string) =
           name: true,
           username: true,
           image: true,
-        }
+        },
       },
     },
   })

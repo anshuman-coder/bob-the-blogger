@@ -26,7 +26,7 @@ const Card: FC<UserProps> = ({
       },
       onError: err => {
         toast.error(err.message)
-      }
+      },
     })
   }, [followUser, userId, username])
 
@@ -53,7 +53,7 @@ const Card: FC<UserProps> = ({
         onClick={handleFollow}
         className={
           clsx(
-          followUser.isLoading ? '!px-6 !py-4' : 'px-4'
+            followUser.isLoading ? '!px-6 !py-4' : 'px-4',
           )
         }
       >

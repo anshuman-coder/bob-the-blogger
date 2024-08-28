@@ -4,7 +4,7 @@ import { db } from '~/server/db'
 export const getUserByAttribute = async (attribs: keyof User, value: Prisma.UserWhereInput[keyof Prisma.UserWhereInput], select?: Prisma.UserSelect) => {
   return db.user.findFirst({
     where: {
-      [attribs]: value
+      [attribs]: value,
     },
     select: select,
   })
@@ -13,14 +13,14 @@ export const getUserByAttribute = async (attribs: keyof User, value: Prisma.User
 export const createUser = async (data: Prisma.UserCreateInput, select?: Prisma.UserSelect) => {
   return db.user.create({
     data: data,
-    select: select
+    select: select,
   })
 }
 
 export const createAccountLink = async (data: Prisma.AccountCreateInput) => {
   return db.account.create({
-    data: data
-  }) 
+    data: data,
+  })
 }
 
 export const getUsers = async (where?: Prisma.UserWhereInput, select?: Prisma.UserSelect, orderBy?: Prisma.UserOrderByWithRelationInput, paginate?: {
@@ -60,11 +60,11 @@ export const getUserBookmarks = async (userId: string) => {
                   username: true,
                   name: true,
                   image: true,
-                }
+                },
               },
             },
           },
-        }
+        },
       },
     },
   })
@@ -81,15 +81,15 @@ export const followUser = async (followerId: string, followingId: string) => {
       data: {
         follower: {
           connect: {
-            id: followerId
-          }
+            id: followerId,
+          },
         },
         following: {
           connect: {
-            id: followingId
+            id: followingId,
           },
-        }
-      }
+        },
+      },
     })
 
     return true
