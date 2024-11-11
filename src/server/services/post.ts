@@ -144,7 +144,7 @@ export const bookmarkPost = async (userId: string, postId: string) => {
 }
 
 export const likePost = async (userId: string, postId: string) => {
-  const whereClause: Prisma.LikeWhereInput = { userId, postId }
+  const whereClause: Prisma.LikeWhereInput = { userId, postId, type: 'post' }
   const checkLike = await db.like.findFirst({ where: whereClause })
 
   if(checkLike) {

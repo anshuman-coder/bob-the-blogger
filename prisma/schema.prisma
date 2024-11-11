@@ -158,17 +158,25 @@ model Follower {
     @@map("follower")
 }
 
+enum LikeType {
+    post
+    comment
+}
+
 model Like {
     id        String   @id @default(cuid())
-    postId    String   @map("post_id")
+    type      LikeType @default(post)
+    postId    String?  @map("post_id")
     userId    String   @map("user_id")
+    commentId String?  @map("comment_id")
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    post Post @relation(fields: [postId], references: [id])
-    user User @relation(fields: [userId], references: [id])
+    post    Post?    @relation(fields: [postId], references: [id])
+    user    User     @relation(fields: [userId], references: [id])
+    comment Comment? @relation(fields: [commentId], references: [id])
 
-    @@unique([userId, postId])
+    @@unique([userId, postId, commentId])
     @@map("like")
 }
 
@@ -180,8 +188,9 @@ model Comment {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    post Post @relation(fields: [postId], references: [id])
-    user User @relation(fields: [userId], references: [id])
+    post  Post   @relation(fields: [postId], references: [id])
+    user  User   @relation(fields: [userId], references: [id])
+    likes Like[]
 
     @@map("comment")
 }
