@@ -2,7 +2,7 @@ import type { Prisma } from '@prisma/client'
 import { db } from '~/server/db'
 import { LIMIT } from '~/utils/constant'
 
-export const getCommentsByPostId = async (id: string, select: Prisma.CommentSelect = {}, cursor?: string) => {
+export const getCommentsByPostId = async (id: string, select: Prisma.CommentSelect = {}, userId?: string, cursor?: string) => {
   const post = await db.post.findUnique({
     where: {
       id,
@@ -30,6 +30,14 @@ export const getCommentsByPostId = async (id: string, select: Prisma.CommentSele
           },
           createdAt: true,
           updatedAt: true,
+          likes: userId ? {
+            where: {
+              user: {
+                id: userId,
+              },
+              type: 'comment',
+            },
+          } : false,
         },
         ...select,
       },
@@ -71,4 +79,30 @@ export const addComment = async (postId: string, userId: string, text: string) =
   })
 
   return data
+}
+
+export const likeComment = async (userId: string, commentId: string) => {
+  const whereClause: Prisma.LikeWhereInput = {
+    userId,
+    commentId,
+    type: 'comment',
+  }
+
+  const checkLike = await db.like.findFirst({ where: whereClause })
+  if(checkLike) {
+    await db.like.delete({
+      where: { id: checkLike.id },
+    })
+    return false
+  } else {
+    await db.like.create({
+      data: {
+        user: { connect: { id: userId } },
+        comment: { connect: { id: commentId } },
+        type: 'comment',
+      },
+    })
+
+    return true
+  }
 }

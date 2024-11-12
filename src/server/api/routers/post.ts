@@ -158,10 +158,11 @@ export const postRouter = createTRPCRouter({
       postId: z.string().min(1, 'postId is required!'),
       cursor: z.string().nullish(),
     }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const { postId, cursor } = input
+      const { session } = ctx
 
-      const data = await CommentService.getCommentsByPostId(postId, {}, cursor ?? '')
+      const data = await CommentService.getCommentsByPostId(postId, {}, session?.user?.id, cursor ?? '')
 
       return data
     }),

@@ -1,6 +1,4 @@
-import { postRouter } from '~/server/api/routers/post'
-import { tagRouter } from '~/server/api/routers/Tag'
-import { UserRouter } from '~/server/api/routers/user'
+import * as routes from '~/server/api/routers'
 import { createTRPCRouter } from '~/server/api/trpc'
 
 /**
@@ -9,9 +7,10 @@ import { createTRPCRouter } from '~/server/api/trpc'
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  post: postRouter,
-  tag: tagRouter,
-  user: UserRouter,
+  post: routes.postRouter,
+  tag: routes.tagRouter,
+  user: routes.UserRouter,
+  comment: routes.commentRouter,
 })
 
 // export type definition of API

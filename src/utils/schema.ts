@@ -20,3 +20,7 @@ export const writeFormSchema = z.object({
 export const CommentFormSchema = z.object({
   text: z.string().min(3, 'Write atleast a word!'),
 })
+
+export const LikeCommentSchema = z.object({
+  commentId: z.string().min(1, 'commentId is important!'),
+})
