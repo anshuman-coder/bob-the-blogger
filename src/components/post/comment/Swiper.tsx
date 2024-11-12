@@ -70,7 +70,7 @@ const Swiper: FC<SwiperProps> = ({
             leaveTo='translate-x-full'
           >
             <Dialog.Panel className='relative h-screen w-[200px] bg-white shadow-md sm:w-[400px]'>
-              <div className='flex h-full w-full flex-col px-6 overflow-hidden'>
+              <div id='comment-scroll-div' className='flex h-full w-full flex-col px-6 overflow-scroll'>
                 <div className='mt-10 mb-5 flex items-center justify-between text-xl'>
                   <h2 className='font-medium'>Responses ({commentCount})</h2>
                   <Button variant='unstyled' icon className='!px-1' onClick={handleClose}>
@@ -103,28 +103,26 @@ const Swiper: FC<SwiperProps> = ({
                     Comment
                   </Button>
                 </form>
-                <div id='comment-scroll-div' className='w-full h-auto overflow-auto border-t border-t-gray-300 py-5'>
-                  <InfiniteScroll
-                    dataLength={commentCount ?? 0}
-                    next={getComments.fetchNextPage}
-                    hasMore={Boolean(!!getComments.hasNextPage)}
-                    loader={<Loader className='w-4 h-4' />}
-                    scrollableTarget='comment-scroll-div'
-                    className='w-full'
-                  >
-                    <div className={clsx(
-                      'flex flex-col w-full items-center justify-start gap-y-6 overflow-auto',
-                    )}>
-                      {
-                        getComments.isSuccess &&
+                <InfiniteScroll
+                  dataLength={commentCount ?? 0}
+                  next={getComments.fetchNextPage}
+                  hasMore={Boolean(!!getComments.hasNextPage)}
+                  loader={<Loader className='w-4 h-4' />}
+                  scrollableTarget='comment-scroll-div'
+                  className='w-full'
+                >
+                  <div className={clsx(
+                    'flex flex-col w-full items-center justify-start gap-y-6 overflow-hidden',
+                  )}>
+                    {
+                      getComments.isSuccess &&
                       getComments
                         .data?.pages?.flatMap(
                           page => page.data.map(comment => (<Comment key={comment.id} {...comment} />)),
                         )
-                      }
-                    </div>
-                  </InfiniteScroll>
-                </div>
+                    }
+                  </div>
+                </InfiniteScroll>
               </div>
             </Dialog.Panel>
           </Transition.Child>
