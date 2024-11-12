@@ -1,14 +1,16 @@
 import { formatDistanceToNow } from 'date-fns'
 import { Heart } from 'lucide-react'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import type { FC } from 'react'
+import toast from 'react-hot-toast'
 import { Button } from '~/components/global'
-import type { RouterOutputs } from '~/utils/api'
+import { api, type RouterOutputs } from '~/utils/api'
 
 type CommentProps = RouterOutputs['post']['getComments']['data'][number]
 
 const Comment: FC<CommentProps> = ({
+  id,
   user,
   createdAt,
   text,
@@ -17,10 +19,34 @@ const Comment: FC<CommentProps> = ({
 
   const [isLike, setIsLike] = useState<boolean>(false)
 
+  const likeComment = api.comment.like.useMutation()
+
   useEffect(() => {
     setIsLike(Boolean(likes.length))
   }, [likes])
 
+
+  const handleLike = useCallback(() => {
+    return toast.promise<string>(
+      new Promise((resolve, reject) => {
+        const likeReq = { commentId: id }
+        likeComment.mutate(likeReq, {
+          onSuccess: (_like) => {
+            setIsLike(_like)
+            resolve(_like ? 'Comment liked!' : 'Comment disliked!')
+          },
+          onError: (err) => {
+            reject(err?.message ?? 'Something went wrong!')
+          },
+        })
+      }),
+      {
+        loading: 'Liking...',
+        success: (msg) => `${msg}`,
+        error: (err) => `${err}`,
+      },
+    )
+  }, [id, likeComment])
 
   return (
     <div
@@ -46,6 +72,7 @@ const Comment: FC<CommentProps> = ({
           <Button
             icon
             variant='unstyled'
+            onClick={handleLike}
           >
             {
               isLike ? (
