@@ -70,7 +70,7 @@ const Swiper: FC<SwiperProps> = ({
             leaveTo='translate-x-full'
           >
             <Dialog.Panel className='relative h-screen w-[200px] bg-white shadow-md sm:w-[400px]'>
-              <div id='comment-scroll-div' className='flex h-full w-full flex-col px-6 overflow-scroll'>
+              <div id='commentScrollDiv' className='flex h-full w-full flex-col px-6 overflow-scroll'>
                 <div className='mt-10 mb-5 flex items-center justify-between text-xl'>
                   <h2 className='font-medium'>Responses ({commentCount})</h2>
                   <Button variant='unstyled' icon className='!px-1' onClick={handleClose}>
@@ -104,12 +104,14 @@ const Swiper: FC<SwiperProps> = ({
                   </Button>
                 </form>
                 <InfiniteScroll
-                  dataLength={commentCount ?? 0}
+                  dataLength={
+                    getComments.data?.pages?.flatMap((page) => page.data).length ?? 0
+                  }
                   next={getComments.fetchNextPage}
                   hasMore={Boolean(!!getComments.hasNextPage)}
                   loader={<Loader className='w-4 h-4' />}
-                  scrollableTarget='comment-scroll-div'
-                  className='w-full'
+                  scrollableTarget='commentScrollDiv'
+                  className='w-full !overflow-hidden'
                 >
                   <div className={clsx(
                     'flex flex-col w-full items-center justify-start gap-y-6 overflow-hidden',
