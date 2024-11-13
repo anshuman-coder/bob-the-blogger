@@ -3,10 +3,18 @@ import { z } from 'zod'
 import {
   createTRPCRouter,
   protectedProcedure,
+  publicProcedure,
 } from '~/server/api/trpc'
 import * as UserService from '~/server/services/user'
 
 export const UserRouter = createTRPCRouter({
+  getProfile: publicProcedure
+    .input(z.object({ username: z.string().min(1, 'username is required!') }))
+    .query(async ({ input }) => {
+      const { username } = input
+
+      return UserService.getUserByUserName(username)
+    }),
   getUsers: protectedProcedure
     .query(async ({ ctx }) => {
       const { session: { user } } = ctx

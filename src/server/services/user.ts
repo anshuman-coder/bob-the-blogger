@@ -95,3 +95,23 @@ export const followUser = async (followerId: string, followingId: string) => {
     return true
   }
 }
+
+export const getUserByUserName = async (username: string) => {
+  return db.user.findUnique({
+    where: { username },
+    select: {
+      id: true,
+      username: true,
+      name: true,
+      image: true,
+      email: true,
+      createdAt: true,
+      updatedAt: true,
+      _count: {
+        select: {
+          posts: true,
+        },
+      },
+    },
+  })
+}
